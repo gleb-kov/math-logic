@@ -1,9 +1,10 @@
 #ifndef MATLOG_PARSER_H
 #define MATLOG_PARSER_H
 
-#include "../utils/grammar.h"
-#include <string>
 #include <memory>
+#include <string>
+
+#include "../utils/grammar.h"
 
 class TParser {
 private:

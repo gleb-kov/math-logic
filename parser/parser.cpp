@@ -1,5 +1,4 @@
 #include "parser.h"
-#include "../utils/grammar.h"
 
 TParser::TParser(std::string s) : TParser(s.begin(), s.end()) {}
 

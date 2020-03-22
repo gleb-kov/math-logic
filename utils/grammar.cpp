@@ -57,22 +57,34 @@ std::string TOperation::to_string() const {
 TUnaryOperation::TUnaryOperation(TOperation const &sign, NGrammar::expr op)
         : sign(sign), operand(std::move(op)) {}
 
-std::string TUnaryOperation::suffix_print() {
-    return '(' + sign.to_string() + operand->suffix_print() + ')';
+std::string TUnaryOperation::to_suffix() {
+    return '(' + sign.to_string() + operand->to_suffix() + ')';
+}
+
+std::string TUnaryOperation::to_string() {
+    return sign.to_string() + operand->to_string();
 }
 
 TBinaryOperation::TBinaryOperation(TOperation const &sign, NGrammar::expr lhs, NGrammar::expr rhs)
         : sign(sign), lhs(std::move(lhs)), rhs(std::move(rhs)) {}
 
-std::string TBinaryOperation::suffix_print() {
-    return '(' + sign.to_string() + ',' + lhs->suffix_print() + ',' + rhs->suffix_print() + ')';
+std::string TBinaryOperation::to_suffix() {
+    return '(' + sign.to_string() + ',' + lhs->to_suffix() + ',' + rhs->to_suffix() + ')';
+}
+
+std::string TBinaryOperation::to_string() {
+    return '(' + lhs->to_string() + ' ' + sign.to_string() + ' ' + rhs->to_string() + ')';
 }
 
 TVariable::TVariable(std::string const &name) : name(name) {}
 
 TVariable::TVariable(std::string &&name) : name(std::move(name)) {}
 
-std::string TVariable::suffix_print() {
+std::string TVariable::to_suffix() {
+    return name;
+}
+
+std::string TVariable::to_string() {
     return name;
 }
 

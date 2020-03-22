@@ -1,8 +1,8 @@
 #ifndef MATLOG_GRAMMAR_H
 #define MATLOG_GRAMMAR_H
 
-#include <string>
 #include <memory>
+#include <string>
 
 enum class EToken {
     Turnstile,
@@ -72,7 +72,9 @@ public:
 };
 
 struct TNode {
-    virtual std::string suffix_print() = 0;
+    virtual std::string to_suffix() = 0;
+
+    virtual std::string to_string() = 0;
 };
 
 struct TUnaryOperation : TNode {
@@ -81,7 +83,9 @@ struct TUnaryOperation : TNode {
 
     TUnaryOperation(TOperation const &sign, NGrammar::expr op);
 
-    [[nodiscard]] std::string suffix_print() override;
+    [[nodiscard]] std::string to_suffix() override;
+
+    [[nodiscard]] std::string to_string() override;
 };
 
 struct TBinaryOperation : TNode {
@@ -91,7 +95,9 @@ struct TBinaryOperation : TNode {
 
     TBinaryOperation(TOperation const &sign, NGrammar::expr lhs, NGrammar::expr rhs);
 
-    [[nodiscard]] std::string suffix_print() override;
+    [[nodiscard]] std::string to_suffix() override;
+
+    [[nodiscard]] std::string to_string() override;
 };
 
 struct TVariable : TNode {
@@ -101,7 +107,9 @@ struct TVariable : TNode {
 
     TVariable(std::string &&name);
 
-    std::string suffix_print() override;
+    std::string to_suffix() override;
+
+    std::string to_string() override;
 
     static bool good_first_characher(char c);
 

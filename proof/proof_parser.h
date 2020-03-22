@@ -1,12 +1,12 @@
 #ifndef MATLOG_PROOF_PARSER_H
 #define MATLOG_PROOF_PARSER_H
 
-#include "../parser/parser.h"
-
-#include <string>
 #include <memory>
-#include <vector>
 #include <ostream>
+#include <string>
+#include <vector>
+
+#include "../parser/parser.h"
 
 class TProofParser {
 private:

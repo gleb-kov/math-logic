@@ -1,5 +1,5 @@
 all: 
-	g++ -std=c++17 -O3 grammar.h parser.h parser.cpp main.cpp -o solution.out
+	g++ -std=c++17 -O3 utils/grammar.h utils/grammar.cpp parser/parser.h parser/parser.cpp task1_parse.cpp -o task1.out
 
 run:
-	./solution.out
+	./task1.out

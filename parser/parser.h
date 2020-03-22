@@ -1,7 +1,9 @@
 #ifndef MATLOG_PARSER_H
 #define MATLOG_PARSER_H
 
-#include "grammar.h"
+#include "../utils/grammar.h"
+#include <string>
+#include <memory>
 
 class TParser {
 private:
@@ -9,15 +11,9 @@ private:
 
 private:
     expr res;
-    EOperation token = EOperation::None;
-
-    // given string borders
+    EToken token = EToken::None;
     std::string::iterator begin;
     std::string::iterator end;
-
-    // current token borders
-    std::string::iterator token_l;
-    std::string::iterator token_r;
 
 private:
     [[nodiscard]] expr parse_impl();
@@ -28,11 +24,11 @@ private:
 
     [[nodiscard]] expr parse_neg();
 
+    [[nodiscard]] expr parse_var();
+
     void next_token();
 
-    void take_variable();
-
-    [[nodiscard]] EOperation starts_with();
+    [[nodiscard]] EToken starts_with();
 
 public:
     explicit TParser(std::string s);

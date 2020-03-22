@@ -1,16 +1,29 @@
 #include "parser.h"
 
-TParser::TParser(std::string s) : TParser(s.begin(), s.end()) {}
-
-TParser::TParser(std::string::iterator s, std::string::iterator t) : begin(s), end(t) {
-    if (begin < end) {
-        next_token();
-        res = parse_impl();
-    }
+TParser::expr TParser::parse(std::string &s) {
+    return parse(s.begin(), s.end());
 }
 
-TParser::expr TParser::get_result() {
-    return res;
+TParser::expr TParser::parse(std::string::iterator from, std::string::iterator to) {
+    begin = from;
+    end = to;
+    if (begin < end) {
+        next_token();
+        return parse_impl();
+    }
+    return EMPTY;
+}
+
+TParser::expr TParser::parse_context(std::string &s) {
+    return parse_context(s.begin(), s.end());
+}
+
+TParser::expr TParser::parse_context(std::string::iterator from, std::string::iterator to) {
+    return EMPTY;
+}
+
+void TParser::clear() {
+    token = EToken::None;
 }
 
 TParser::expr TParser::parse_impl() {
@@ -69,10 +82,14 @@ TParser::expr TParser::parse_var() {
 }
 
 void TParser::next_token() {
+    while (true) {
+        token = starts_with();
+        if (!NGrammar::is_skippable(token)) break;
+    }
     token = starts_with();
     if (token == EToken::None) return;
     if (token == EToken::Error) {
-        throw std::runtime_error("Parsing error.");
+        error();
     }
     if (token != EToken::Variable) {
         std::advance(begin, NGrammar::to_string(token).size());
@@ -83,7 +100,7 @@ EToken TParser::starts_with() {
     if (begin >= end) {
         return EToken::None;
     }
-    for (auto op : NGrammar::TokenOperations) {
+    for (auto op : NGrammar::TOKEN_OPERATIONS) {
         std::string prefix = NGrammar::to_string(op);
         std::string::iterator fake = begin;
         size_t ind = 0;
@@ -100,4 +117,8 @@ EToken TParser::starts_with() {
         return EToken::Variable;
     }
     return EToken::Error;
+}
+
+void TParser::error() {
+    throw std::runtime_error("Parsing error.");
 }

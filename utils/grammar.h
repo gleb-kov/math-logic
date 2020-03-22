@@ -10,19 +10,19 @@ enum class EToken {
     Disjunction,
     Conjunction,
     Negation,
-    Variable,
     LeftBrace,
     RightBrace,
     Comma,
     Space,
     Tab,
     NewLine,
+    Variable,
     None,
     Error
 };
 
-// turnstile ?
 enum class EOperation {
+    Turnstile,
     Implication,
     Disjunction,
     Conjunction,
@@ -34,31 +34,46 @@ struct TNode;
 namespace NGrammar {
     using expr = std::shared_ptr<TNode>;
 
-    // turnstile
-    constexpr EOperation BinaryOperations[] = {
+    constexpr EOperation BINARY_OPERATIONS[] = {
+            EOperation::Turnstile,
             EOperation::Implication,
             EOperation::Disjunction,
             EOperation::Conjunction,
     };
 
-    constexpr EOperation UnaryOperations[] = {
+    constexpr EOperation UNARY_OPERATIONS[] = {
             EOperation::Negation
     };
 
-    // turnstile ?
-    constexpr EToken TokenOperations[] = {
+    constexpr EToken TOKEN_OPERATIONS[] = {
+            EToken::Turnstile,
             EToken::Implication,
             EToken::Disjunction,
             EToken::Conjunction,
             EToken::Negation,
             EToken::LeftBrace,
-            EToken::RightBrace
+            EToken::RightBrace,
+            EToken::Comma,
+            EToken::Space,
+            EToken::Tab,
+            EToken::NewLine
     };
 
-    // turnstile ?
-    std::string to_string(EOperation sign);
+    constexpr EToken SKIPPABLE[]{
+            EToken::Space,
+            EToken::Tab,
+            EToken::NewLine
+    };
 
-    std::string to_string(EToken sign);
+    bool is_binary(EOperation);
+
+    bool is_unary(EOperation);
+
+    bool is_skippable(EToken);
+
+    std::string to_string(EOperation);
+
+    std::string to_string(EToken);
 }
 
 struct TOperation {
@@ -66,7 +81,7 @@ private:
     const EOperation sign;
 
 public:
-    TOperation(EOperation sign);
+    explicit TOperation(EOperation);
 
     std::string to_string() const;
 };
@@ -81,7 +96,7 @@ struct TUnaryOperation : TNode {
     const TOperation sign;
     NGrammar::expr operand;
 
-    TUnaryOperation(TOperation const &sign, NGrammar::expr op);
+    TUnaryOperation(EOperation const &, NGrammar::expr);
 
     [[nodiscard]] std::string to_suffix() override;
 
@@ -93,7 +108,7 @@ struct TBinaryOperation : TNode {
     NGrammar::expr lhs;
     NGrammar::expr rhs;
 
-    TBinaryOperation(TOperation const &sign, NGrammar::expr lhs, NGrammar::expr rhs);
+    TBinaryOperation(EOperation const &, NGrammar::expr lhs, NGrammar::expr rhs);
 
     [[nodiscard]] std::string to_suffix() override;
 
@@ -103,17 +118,17 @@ struct TBinaryOperation : TNode {
 struct TVariable : TNode {
     std::string name;
 
-    TVariable(std::string const &name);
+    TVariable(std::string const &);
 
-    TVariable(std::string &&name);
+    TVariable(std::string &&);
 
     std::string to_suffix() override;
 
     std::string to_string() override;
 
-    static bool good_first_characher(char c);
+    static bool good_first_characher(char);
 
-    static bool good_character(char c);
+    static bool good_character(char);
 };
 
 #endif //MATLOG_GRAMMAR_H

@@ -11,10 +11,10 @@ private:
     using expr = NGrammar::expr;
 
 private:
-    expr res;
     EToken token = EToken::None;
     std::string::iterator begin;
     std::string::iterator end;
+    const expr EMPTY = std::shared_ptr<TNode>(nullptr);
 
 private:
     [[nodiscard]] expr parse_impl();
@@ -31,12 +31,20 @@ private:
 
     [[nodiscard]] EToken starts_with();
 
+    void error() noexcept(false);
+
 public:
-    explicit TParser(std::string s);
+    TParser() = default;
 
-    TParser(std::string::iterator begin, std::string::iterator end);
+    expr parse(std::string &s);
 
-    expr get_result();
+    expr parse(std::string::iterator from, std::string::iterator to);
+
+    expr parse_context(std::string &);
+
+    expr parse_context(std::string::iterator from, std::string::iterator to);
+
+    void clear();
 };
 
 #endif //MATLOG_PARSER_H

@@ -3,6 +3,11 @@
 
 #include "proof/proof_parser.h"
 
+/*
+ * TODO:
+ * arrange structures like turnstile, hypothesis, axiom and so on
+ */
+
 int main() {
     std::string head;
     std::string step;

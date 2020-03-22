@@ -11,7 +11,7 @@
 class TProofParser {
 private:
     std::string const head;
-    std::unique_ptr<TParser> parser;
+    TParser parser;
     std::vector<std::string> proof; // change to needed structure
     bool failed = false;
 
@@ -25,8 +25,10 @@ public:
     bool is_failed() const;
 
     std::vector<std::string>::iterator begin();
+
+    std::vector<std::string>::iterator end();
 };
 
-std::ostream &operator<<(std::ostream &s, TProofParser &a);
+std::ostream &operator<<(std::ostream &s, TProofParser &);
 
 #endif //MATLOG_PROOF_PARSER_H

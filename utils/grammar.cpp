@@ -1,7 +1,38 @@
+#include <cassert>
+
 #include "grammar.h"
+
+bool NGrammar::is_binary(EOperation sign) {
+    for (EOperation s : BINARY_OPERATIONS) {
+        if (s == sign) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool NGrammar::is_unary(EOperation sign) {
+    for (EOperation s : UNARY_OPERATIONS) {
+        if (s == sign) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool NGrammar::is_skippable(EToken sign) {
+    for (EToken s : SKIPPABLE) {
+        if (s == sign) {
+            return true;
+        }
+    }
+    return false;
+}
 
 std::string NGrammar::to_string(EOperation sign) {
     switch (sign) {
+        case EOperation::Turnstile:
+            return "|-";
         case EOperation::Implication:
             return "->";
         case EOperation::Disjunction:
@@ -54,8 +85,10 @@ std::string TOperation::to_string() const {
     return NGrammar::to_string(sign);
 }
 
-TUnaryOperation::TUnaryOperation(TOperation const &sign, NGrammar::expr op)
-        : sign(sign), operand(std::move(op)) {}
+TUnaryOperation::TUnaryOperation(EOperation const &sign, NGrammar::expr op)
+        : sign(sign), operand(std::move(op)) {
+    assert(NGrammar::is_unary(sign));
+}
 
 std::string TUnaryOperation::to_suffix() {
     return '(' + sign.to_string() + operand->to_suffix() + ')';
@@ -65,8 +98,10 @@ std::string TUnaryOperation::to_string() {
     return sign.to_string() + operand->to_string();
 }
 
-TBinaryOperation::TBinaryOperation(TOperation const &sign, NGrammar::expr lhs, NGrammar::expr rhs)
-        : sign(sign), lhs(std::move(lhs)), rhs(std::move(rhs)) {}
+TBinaryOperation::TBinaryOperation(EOperation const &sign, NGrammar::expr lhs, NGrammar::expr rhs)
+        : sign(sign), lhs(std::move(lhs)), rhs(std::move(rhs)) {
+    assert(NGrammar::is_binary(sign));
+}
 
 std::string TBinaryOperation::to_suffix() {
     return '(' + sign.to_string() + ',' + lhs->to_suffix() + ',' + rhs->to_suffix() + ')';

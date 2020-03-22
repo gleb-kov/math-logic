@@ -1,7 +1,7 @@
 #include "proof_parser.h"
 
 TProofParser::TProofParser(std::string const &statement, std::vector<std::string> const &proof_body) : head(statement) {
-
+    proof = proof_body;
 }
 
 std::string TProofParser::get_statement() const {
@@ -20,10 +20,18 @@ std::vector<std::string>::iterator TProofParser::begin() {
     return proof.begin();
 }
 
-std::ostream &operator<<(std::ostream &s, TProofParser &a) {
-    if (a.is_failed()) {
-        return s << std::string("Proof is incorrect") << std::endl;
+std::vector<std::string>::iterator TProofParser::end() {
+    return proof.end();
+}
+
+std::ostream &operator<<(std::ostream &s, TProofParser &solver) {
+    if (solver.is_failed()) {
+        s << std::string("Proof is incorrect") << std::endl;
     } else {
-        return s << a.get_statement() << std::endl;
+        s << solver.get_statement() << std::endl;
+        for (auto it = solver.begin(); it != solver.end(); it++) {
+            s << *it << std::endl;
+        }
     }
+    return s;
 }

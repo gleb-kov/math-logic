@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 enum class EToken {
     Turnstile,
@@ -30,9 +31,11 @@ enum class EOperation {
 };
 
 struct TNode;
+struct TContext;
 
 namespace NGrammar {
     using expr = std::shared_ptr<TNode>;
+    using context = std::shared_ptr<TContext>;
 
     constexpr EOperation BINARY_OPERATIONS[] = {
             EOperation::Turnstile,
@@ -59,6 +62,12 @@ namespace NGrammar {
             EToken::NewLine
     };
 
+    const EToken HIDDEN_TOKEN[] = {
+            EToken::Variable,
+            EToken::None,
+            EToken::Error
+    };
+
     constexpr EToken SKIPPABLE[]{
             EToken::Space,
             EToken::Tab,
@@ -71,6 +80,8 @@ namespace NGrammar {
 
     bool is_skippable(EToken);
 
+    bool is_hidden(EToken);
+
     std::string to_string(EOperation);
 
     std::string to_string(EToken);
@@ -81,7 +92,7 @@ private:
     const EOperation sign;
 
 public:
-    explicit TOperation(EOperation);
+    TOperation(EOperation);
 
     std::string to_string() const;
 };
@@ -93,9 +104,11 @@ struct TNode {
 };
 
 struct TUnaryOperation : TNode {
+private:
     const TOperation sign;
     NGrammar::expr operand;
 
+public:
     TUnaryOperation(EOperation const &, NGrammar::expr);
 
     [[nodiscard]] std::string to_suffix() override;
@@ -104,10 +117,12 @@ struct TUnaryOperation : TNode {
 };
 
 struct TBinaryOperation : TNode {
+private:
     const TOperation sign;
     NGrammar::expr lhs;
     NGrammar::expr rhs;
 
+public:
     TBinaryOperation(EOperation const &, NGrammar::expr lhs, NGrammar::expr rhs);
 
     [[nodiscard]] std::string to_suffix() override;
@@ -116,8 +131,10 @@ struct TBinaryOperation : TNode {
 };
 
 struct TVariable : TNode {
+private:
     std::string name;
 
+public:
     TVariable(std::string const &);
 
     TVariable(std::string &&);
@@ -130,5 +147,27 @@ struct TVariable : TNode {
 
     static bool good_character(char);
 };
+
+struct TContext {
+private:
+    const TOperation sign;
+    std::vector<NGrammar::expr> hypothesis;
+    NGrammar::expr result;
+
+public:
+    TContext();
+
+    void add_hypothesis(NGrammar::expr const &);
+
+    void set_statement(NGrammar::expr const &);
+
+    std::string to_suffix();
+
+    std::string to_string();
+};
+
+std::ostream &operator<<(std::ostream &s, TNode &);
+
+std::ostream &operator<<(std::ostream &s, TContext &);
 
 #endif //MATLOG_GRAMMAR_H

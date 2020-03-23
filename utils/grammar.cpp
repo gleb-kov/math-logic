@@ -29,6 +29,15 @@ bool NGrammar::is_skippable(EToken sign) {
     return false;
 }
 
+bool NGrammar::is_hidden(EToken sign) {
+    for (EToken s : HIDDEN_TOKEN) {
+        if (s == sign) {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::string NGrammar::to_string(EOperation sign) {
     switch (sign) {
         case EOperation::Turnstile:
@@ -129,4 +138,30 @@ bool TVariable::good_first_characher(char c) {
 
 bool TVariable::good_character(char c) {
     return good_first_characher(c) || c == '\'' || ('0' <= c && c <= '9');
+}
+
+TContext::TContext() : sign(EOperation::Turnstile) {}
+
+void TContext::add_hypothesis(NGrammar::expr const &hyp) {
+    hypothesis.emplace_back(hyp);
+}
+
+void TContext::set_statement(NGrammar::expr const &res) {
+    result = res;
+}
+
+std::string TContext::to_suffix() {
+    return "";
+}
+
+std::string TContext::to_string() {
+    return "";
+}
+
+std::ostream &operator<<(std::ostream &s, TNode &e) {
+    return s << e.to_string();
+}
+
+std::ostream &operator<<(std::ostream &s, TContext &e) {
+    return s << e.to_string();
 }

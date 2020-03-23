@@ -1,4 +1,11 @@
+#include <iostream>
 #include "parser.h"
+
+TParser::expr TParser::parse() {
+    if (begin >= end) return EMPTY_EXPR;
+    next_token();
+    return parse_impl();
+}
 
 TParser::expr TParser::parse(std::string &s) {
     return parse(s.begin(), s.end());
@@ -7,19 +14,25 @@ TParser::expr TParser::parse(std::string &s) {
 TParser::expr TParser::parse(std::string::iterator from, std::string::iterator to) {
     begin = from;
     end = to;
-    if (begin < end) {
-        next_token();
-        return parse_impl();
-    }
-    return EMPTY;
+    return parse();
 }
 
-TParser::expr TParser::parse_context(std::string &s) {
+TParser::context TParser::parse_context(std::string &s) {
     return parse_context(s.begin(), s.end());
 }
 
-TParser::expr TParser::parse_context(std::string::iterator from, std::string::iterator to) {
-    return EMPTY;
+TParser::context TParser::parse_context(std::string::iterator from, std::string::iterator to) {
+    if (begin >= end) return EMPTY_CONTEXT;
+    context result;
+    next_token();
+    if (token != EToken::Turnstile) {
+        do {
+            result->add_hypothesis(parse());
+        } while (token == EToken::Comma);
+    }
+    if (token != EToken::Turnstile) error();
+    result->set_statement(parse());
+    return result;
 }
 
 void TParser::clear() {
@@ -62,7 +75,7 @@ TParser::expr TParser::parse_neg() {
         if (token == EToken::LeftBrace) {
             next_token();
             cur = parse_impl();
-        } else {
+        } else if (token == EToken::Variable){
             cur = parse_var();
         }
         next_token();
@@ -85,15 +98,13 @@ void TParser::next_token() {
     while (true) {
         token = starts_with();
         if (!NGrammar::is_skippable(token)) break;
+        shift_token();
     }
-    token = starts_with();
     if (token == EToken::None) return;
     if (token == EToken::Error) {
         error();
     }
-    if (token != EToken::Variable) {
-        std::advance(begin, NGrammar::to_string(token).size());
-    }
+    shift_token();
 }
 
 EToken TParser::starts_with() {
@@ -121,4 +132,10 @@ EToken TParser::starts_with() {
 
 void TParser::error() {
     throw std::runtime_error("Parsing error.");
+}
+
+void TParser::shift_token() {
+    if (!NGrammar::is_hidden(token)) {
+        std::advance(begin, NGrammar::to_string(token).size());
+    }
 }

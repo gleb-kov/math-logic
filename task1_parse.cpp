@@ -14,7 +14,7 @@ bool test() {
     if (solver.parse(t2)->to_suffix() != r2) return false;
     solver.clear();
     try {
-        solver.parse(t3);
+        NGrammar::expr t = solver.parse(t3);
         return false;
     } catch (...) {}
     return true;
@@ -32,7 +32,7 @@ int main() {
     //verdict();
 
     std::string s;
-    std::cin >> s;
+    getline(std::cin, s);
     TParser solver;
     std::cout << solver.parse(s)->to_suffix();
     return 0;

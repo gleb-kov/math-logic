@@ -22,8 +22,10 @@ TParser::context TParser::parse_context(std::string &s) {
 }
 
 TParser::context TParser::parse_context(std::string::iterator from, std::string::iterator to) {
+    begin = from;
+    end = to;
     if (begin >= end) return EMPTY_CONTEXT;
-    context result;
+    context result = std::make_shared<TContext>();
     next_token();
     if (token != EToken::Turnstile) {
         do {

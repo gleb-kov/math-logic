@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 enum class EToken {
@@ -74,6 +75,10 @@ namespace NGrammar {
             EToken::NewLine
     };
 
+    uint64_t check_axiom(expr const &);
+
+    bool is_axiom(expr const &);
+
     bool is_binary(EOperation);
 
     bool is_unary(EOperation);
@@ -92,15 +97,20 @@ private:
     const EOperation sign;
 
 public:
-    TOperation(EOperation);
+    explicit TOperation(EOperation);
 
     std::string to_string() const;
 };
 
 struct TNode {
-    virtual std::string to_suffix() = 0;
+    virtual std::string to_suffix() const = 0;
 
-    virtual std::string to_string() = 0;
+    virtual std::string to_string() const = 0;
+
+    virtual size_t get_hash() const {
+        size_t hash = std::hash<std::string>{}(to_string());
+        return hash;
+    }
 };
 
 struct TUnaryOperation : TNode {
@@ -111,9 +121,9 @@ private:
 public:
     TUnaryOperation(EOperation const &, NGrammar::expr);
 
-    [[nodiscard]] std::string to_suffix() override;
+    [[nodiscard]] std::string to_suffix() const override;
 
-    [[nodiscard]] std::string to_string() override;
+    [[nodiscard]] std::string to_string() const override;
 };
 
 struct TBinaryOperation : TNode {
@@ -125,9 +135,9 @@ private:
 public:
     TBinaryOperation(EOperation const &, NGrammar::expr lhs, NGrammar::expr rhs);
 
-    [[nodiscard]] std::string to_suffix() override;
+    [[nodiscard]] std::string to_suffix() const override;
 
-    [[nodiscard]] std::string to_string() override;
+    [[nodiscard]] std::string to_string() const override;
 };
 
 struct TVariable : TNode {
@@ -135,13 +145,13 @@ private:
     std::string name;
 
 public:
-    TVariable(std::string const &);
+    explicit TVariable(std::string const &);
 
-    TVariable(std::string &&);
+    explicit TVariable(std::string &&);
 
-    std::string to_suffix() override;
+    std::string to_suffix() const override;
 
-    std::string to_string() override;
+    std::string to_string() const override;
 
     static bool good_first_characher(char);
 
@@ -150,7 +160,10 @@ public:
 
 struct TContext {
 private:
+    size_t hyp_size = 0;
     const TOperation sign;
+    const EToken separator;
+    std::unordered_map<size_t, size_t> table;
     std::vector<NGrammar::expr> hypothesis;
     NGrammar::expr result;
 
@@ -161,10 +174,25 @@ public:
 
     void set_statement(NGrammar::expr const &);
 
-    std::string to_suffix();
+    size_t get_hypothesis(NGrammar::expr const &);
+
+    bool has_hypothesis(NGrammar::expr const &);
+
+    size_t size() const;
+
+    [[deprecated]] std::string to_suffix();
 
     std::string to_string();
 };
+
+namespace std {
+    template<>
+    struct hash<TNode> {
+        size_t operator()(TNode const &s) const noexcept {
+            return s.get_hash();
+        }
+    };
+}
 
 std::ostream &operator<<(std::ostream &s, TNode &);
 

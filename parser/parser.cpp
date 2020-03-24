@@ -1,4 +1,3 @@
-#include <iostream>
 #include "parser.h"
 
 TParser::expr TParser::parse() {
@@ -133,7 +132,7 @@ EToken TParser::starts_with() {
 }
 
 void TParser::error() {
-    throw std::runtime_error("Parsing error.");
+    throw parser_error("Parsing error");
 }
 
 void TParser::shift_token() {

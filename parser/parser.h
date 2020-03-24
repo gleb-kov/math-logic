@@ -4,7 +4,8 @@
 #include <memory>
 #include <string>
 
-#include "../utils/grammar.h"
+#include "../grammar/lib.h"
+#include "parser_error.h"
 
 class TParser {
 private:

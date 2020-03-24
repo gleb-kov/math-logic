@@ -69,7 +69,7 @@ bool task1_tests() {
     return catch_test(solver, bad_samples, to_string);
 }
 
-bool task2_test() {
+bool task2_tests() {
     std::vector<std::string> context = {
             "|- A -> A",
             "A->B, !B |- !A",
@@ -87,7 +87,7 @@ bool task2_test() {
 
 bool start() {
     if (!task1_tests()) return false;
-    if (!task2_test()) return false;
+    if (!task2_tests()) return false;
     return true;
 }
 

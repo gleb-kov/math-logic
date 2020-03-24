@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "../parser/parser.h"
+#include "../parser/parser_error.h"
 
 class TProofParser {
 private:
@@ -16,7 +17,7 @@ private:
 private:
     context head;
     TParser parser;
-    std::vector<expr> proof;
+    TExprList proof;
     // hypothesis, axiom or modus ponens
     std::vector<std::pair<size_t, uint64_t>> proof_state;
     // connected expr in proof
@@ -29,34 +30,11 @@ public:
 
     std::pair<size_t, size_t> modus_ponens(expr const &);
 
-    std::vector<expr>::iterator begin();
+    void print(std::ostream &s);
 
-    std::vector<expr>::iterator end();
+    [[deprecated]] std::vector<expr>::iterator begin();
 
-    void print(std::ostream &s) {
-        s << head->to_string() << std::endl;
-        for (size_t i = 0; i < proof.size(); i++) {
-            s << '[' << i + 1 << ". ";
-            switch (proof_state[i].first) {
-                case 0: {
-                    s << "Hypothesis " << proof_state[i].second;
-                    break;
-                }
-                case 1: {
-                    s << "Ax. sch. " << proof_state[i].second;
-                    break;
-                }
-                case 2: {
-                    s << "M.P. " << proof_dependency[i][0] << " " << proof_dependency[i][1];
-                    break;
-                }
-                default: {
-                    throw std::runtime_error("proof parser error");
-                }
-            }
-            s << "] " << proof[i]->to_string() << std::endl;
-        }
-    }
+    [[deprecated]] std::vector<expr>::iterator end();
 };
 
 std::ostream &operator<<(std::ostream &s, TProofParser &);

@@ -3,15 +3,13 @@
 #include <fstream>
 
 #include "proof/proof_parser.h"
+#include "parser/parser_error.h"
 
 /*
  * TODO:
- * structure for hashable expr
- * put it in context and proof parser
- *
- * do not recalc hash for nodes
- * check axiom
+ * structure for hashable expr: add modus ponens helper
  * check modus ponens
+ * check axiom
  */
 
 int main() {
@@ -21,17 +19,18 @@ int main() {
     std::string step;
     getline(fin, head);
     std::vector<std::string> body;
-    while (fin >> step) {
+    while (getline(fin, step)) {
         body.push_back(step);
     }
     try {
         TProofParser solver(head, body);
         std::cout << solver;
-    } catch (std::runtime_error const & error) {
+    } catch (parser_error const & error) {
         std::cout << error.what();
     } catch (...) {
         std::cerr << "Undefined exception";
     }
+
     /*TParser solver;
     std::string a = "C";
     std::string a2 = "B'";

@@ -1,11 +1,11 @@
 # Math Logic course
 [Statements](/ml-2018.pdf)
 
-Course testing system (http://neerc.ifmo.ru/p) requires :
+Course testing system (http://neerc.ifmo.ru/p) requires:
 
 - [Makefile](/Makefile)
 
-- Zip all files for testing system:
+- Zip all files:
 
 ```
 #!/bin/bash

@@ -6,6 +6,26 @@
 
 #include "grammar.h"
 
+struct TUnaryOperation;
+struct TBinaryOperation;
+struct TVariable;
+
+namespace NGrammar {
+    using unary_expr = std::shared_ptr<TUnaryOperation>;
+    using binary_expr = std::shared_ptr<TBinaryOperation>;
+    using var_expr = std::shared_ptr<TVariable>;
+
+    unary_expr to_unary(expr const &);
+
+    binary_expr to_binary(expr const &);
+
+    var_expr to_variable(expr const &);
+
+    uint64_t check_axiom(expr const &);
+
+    bool is_axiom(expr const &);
+}
+
 struct TNode {
     virtual std::string to_suffix() const = 0;
 
@@ -19,8 +39,24 @@ struct TNode {
         return calc_hash();
     }
 
-    virtual bool is_operation(EOperation) {
+    virtual bool is_unary() const {
         return false;
+    }
+
+    virtual bool is_binary() const {
+        return false;
+    }
+
+    virtual bool is_variable() const {
+        return false;
+    }
+
+    virtual bool check_sign(EOperation) {
+        return false;
+    }
+
+    friend bool operator==(NGrammar::expr const &lhs, NGrammar::expr const &rhs) {
+        return lhs->get_hash() == rhs->get_hash();
     }
 };
 
@@ -37,9 +73,13 @@ public:
 
     [[nodiscard]] std::string to_string() const override;
 
+    NGrammar::expr get_operand() const;
+
     size_t get_hash() const override;
 
-    bool is_operation(EOperation) override;
+    bool is_unary() const override;
+
+    bool check_sign(EOperation) override;
 };
 
 struct TBinaryOperation : TNode {
@@ -56,9 +96,15 @@ public:
 
     [[nodiscard]] std::string to_string() const override;
 
+    NGrammar::expr get_lhs() const;
+
+    NGrammar::expr get_rhs() const;
+
     size_t get_hash() const override;
 
-    bool is_operation(EOperation) override;
+    bool is_binary() const override;
+
+    bool check_sign(EOperation) override;
 };
 
 struct TVariable : TNode {
@@ -77,11 +123,12 @@ public:
 
     size_t get_hash() const override;
 
+    bool is_variable() const override;
+
     static bool good_first_characher(char);
 
     static bool good_character(char);
 };
-
 
 namespace std {
     template<>

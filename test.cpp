@@ -33,7 +33,7 @@ bool test(TParser &solver, std::vector<std::string> &samples,
 }
 
 bool catch_test(TParser &solver, std::vector<std::string> &samples, testfunc &func) {
-    for (auto & sample : samples) {
+    for (auto &sample : samples) {
         try {
             func(solver, sample);
             return false;
@@ -85,9 +85,50 @@ bool task2_tests() {
     return true;
 }
 
+bool axiom_tests() {
+    std::array<std::string, 10> axioms = {
+            "A -> B -> A",
+            "(A -> B) -> (A -> B -> C) -> (A -> C)", //
+            "A & B -> A",
+            "A & B -> B",
+            "A -> B -> A & B",
+            "A -> A | B",
+            "B -> A | B",
+            "(A -> C) -> (B -> C) -> (A | B -> C)", //
+            "(A -> B) -> (A -> !B) -> !A", //
+            "!!A -> A"
+    };
+    bool flag = true;
+    for (size_t i = 0; i < axioms.size(); i++) {
+        auto t = NGrammar::check_axiom(TParser().parse(axioms[i]));
+        if (t != i + 1) {
+            flag = false;
+            std::cout << i + 1 << " axiom failed: got " << t << std::endl;
+        }
+    }
+    return flag;
+}
+
+bool anti_axiom_tests() {
+    std::array<std::string, 1> fake = {
+            "A -> B -> B"
+    };
+    bool flag = false;
+    for (size_t i = 0; i < fake.size(); i++) {
+        auto t = NGrammar::check_axiom(TParser().parse(fake[i]));
+        if (t != 0) {
+            flag = true;
+            std::cout << i + 1 << " fake-axiom failed: got " << t << std::endl;
+        }
+    }
+    return !flag;
+}
+
 bool start() {
     if (!task1_tests()) return false;
     if (!task2_tests()) return false;
+    if (!axiom_tests()) return false;
+    if (!anti_axiom_tests()) return false;
     return true;
 }
 

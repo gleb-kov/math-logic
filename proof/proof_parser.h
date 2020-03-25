@@ -20,7 +20,7 @@ private:
     TExprList proof;
     // hypothesis, axiom or modus ponens
     std::vector<std::pair<size_t, uint64_t>> proof_state;
-    // connected expr in proof
+    // connected expr's in proof
     std::vector<std::vector<size_t>> proof_dependency;
 
 public:

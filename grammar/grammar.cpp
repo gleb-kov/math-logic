@@ -1,13 +1,5 @@
 #include "grammar.h"
 
-uint64_t NGrammar::check_axiom(NGrammar::expr const &e) {
-    return 0;
-}
-
-bool NGrammar::is_axiom(NGrammar::expr const &e) {
-    return check_axiom(e) != 0;
-}
-
 bool NGrammar::is_binary(EOperation sign) {
     for (EOperation s : BINARY_OPERATIONS) {
         if (s == sign) {

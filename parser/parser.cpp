@@ -76,7 +76,7 @@ TParser::expr TParser::parse_neg() {
         if (token == EToken::LeftBrace) {
             next_token();
             cur = parse_impl();
-        } else if (token == EToken::Variable){
+        } else if (token == EToken::Variable) {
             cur = parse_var();
         }
         next_token();

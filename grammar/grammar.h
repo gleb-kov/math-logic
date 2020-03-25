@@ -75,10 +75,6 @@ namespace NGrammar {
             EToken::NewLine
     };
 
-    uint64_t check_axiom(expr const &);
-
-    bool is_axiom(expr const &);
-
     bool is_binary(EOperation);
 
     bool is_unary(EOperation);

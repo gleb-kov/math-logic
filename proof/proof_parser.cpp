@@ -35,7 +35,7 @@ NGrammar::context TProofParser::get_statement() const {
     return head;
 }
 
-std::pair<size_t, size_t> TProofParser::modus_ponens(NGrammar::expr const &e){
+std::pair<size_t, size_t> TProofParser::modus_ponens(NGrammar::expr const &e) {
     return {0, 0};
 }
 

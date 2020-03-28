@@ -27,9 +27,11 @@ TParser::context TParser::parse_context(std::string::iterator from, std::string:
     context result = std::make_shared<TContext>();
     next_token();
     if (token != EToken::Turnstile) {
-        do {
+        begin = from;
+        clear();
+        while (token == EToken::Comma || begin == from) {
             result->add_hypothesis(parse());
-        } while (token == EToken::Comma);
+        }
     }
     if (token != EToken::Turnstile) error();
     result->set_statement(parse());

@@ -88,14 +88,14 @@ bool task2_tests() {
 bool axiom_tests() {
     std::array<std::string, 10> axioms = {
             "A -> B -> A",
-            "(A -> B) -> (A -> B -> C) -> (A -> C)", //
+            "(A -> B) -> ((A -> B -> C) -> (A -> C))",
+            "A -> B -> A & B",
             "A & B -> A",
             "A & B -> B",
-            "A -> B -> A & B",
             "A -> A | B",
             "B -> A | B",
-            "(A -> C) -> (B -> C) -> (A | B -> C)", //
-            "(A -> B) -> (A -> !B) -> !A", //
+            "(A -> C) -> (B -> C) -> (A | B -> C)",
+            "(A -> B) -> ((A -> !B) -> !A)",
             "!!A -> A"
     };
     bool flag = true;
@@ -110,8 +110,20 @@ bool axiom_tests() {
 }
 
 bool anti_axiom_tests() {
-    std::array<std::string, 1> fake = {
-            "A -> B -> B"
+    std::array<std::string, 11> fake = {
+            "A -> B -> B",
+            "A | A | A",
+            "(A -> A) -> ((A -> B -> C) -> (A -> C))",
+            "(A -> B) -> ((A -> B -> C) -> (A -> A))",
+            "(A -> B) -> ((B -> B -> C) -> (A -> C))",
+            "A & B -> C",
+            "A & A -> B",
+            "A -> A -> A & B",
+            "A -> B -> A & A",
+            "A -> B | B",
+            // "(A -> C) -> (B -> C) -> (A | B -> C)",
+            // "(A -> B) -> ((A -> !B) -> !A)",
+            "!!A -> B"
     };
     bool flag = false;
     for (size_t i = 0; i < fake.size(); i++) {
@@ -127,8 +139,8 @@ bool anti_axiom_tests() {
 bool start() {
     if (!task1_tests()) return false;
     if (!task2_tests()) return false;
-    if (!axiom_tests()) return false;
     if (!anti_axiom_tests()) return false;
+    if (!axiom_tests()) return false;
     return true;
 }
 

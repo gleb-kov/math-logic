@@ -49,7 +49,7 @@ std::string NGrammar::to_string(EOperation sign) {
         case EOperation::Negation:
             return "!";
         default:
-            return "error";
+            throw std::runtime_error("unsupported token");
     }
 }
 
@@ -76,13 +76,9 @@ std::string NGrammar::to_string(EToken sign) {
         case EToken::Tab:
             return "\t";
         case EToken::NewLine:
-            return "\n";
-        case EToken::None:
-            return "none";
-        case EToken::Variable:
-            return "variable";
+            return "\r";
         default:
-            return "error";
+            throw std::runtime_error("unsupported token");
     }
 }
 

@@ -10,16 +10,12 @@
 #include "expression.h"
 
 struct TExprList {
-public:
-    using rev_impl_signature = std::unordered_map<size_t, std::vector<size_t>>;
-
 private:
     size_t cnt = 0;
     std::unordered_map<size_t, size_t> table;
     std::vector<NGrammar::expr> list;
-
     // indices of expr's where rhs is given implication
-    // rev_impl_signature rev_impl;
+    std::unordered_map<size_t, std::vector<size_t>> rev_impl;
 
 public:
     TExprList() = default;
@@ -38,9 +34,9 @@ public:
 
     std::vector<NGrammar::expr>::iterator end();
 
-    //std::vector<size_t>::iterator rev_impl_begin(NGrammar::expr const &);
+    std::vector<size_t>::iterator rev_impl_begin(NGrammar::expr const &);
 
-    //std::vector<size_t>::iterator rev_impl_end(NGrammar::expr const &);
+    std::vector<size_t>::iterator rev_impl_end(NGrammar::expr const &);
 };
 
 struct TContext {
@@ -60,6 +56,8 @@ public:
     size_t get_hypothesis(NGrammar::expr const &);
 
     bool has_hypothesis(NGrammar::expr const &);
+
+    NGrammar::expr get_statement();
 
     size_t size() const;
 

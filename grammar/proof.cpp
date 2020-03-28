@@ -1,12 +1,16 @@
+#include <cassert>
+
 #include "proof.h"
 
 void TExprList::add(NGrammar::expr const &e) {
     size_t pos = ++cnt;
-    table[e->get_hash()] = pos;
+    size_t h = e->get_hash();
+    table[h] = pos;
     list.emplace_back(e);
-    /*if (e->is_operation(EOperation::Implication)) {
-
-    }*/
+    if (e->check_sign(EOperation::Implication)) {
+        size_t rhs_hash = NGrammar::to_binary(e)->get_rhs()->get_hash();
+        rev_impl[rhs_hash].push_back(pos);
+    }
 }
 
 size_t TExprList::get_index(NGrammar::expr const &e) {
@@ -18,20 +22,22 @@ bool TExprList::contains(NGrammar::expr const &e) {
     return get_index(e) != 0;
 }
 
-/*std::vector<size_t>::iterator TExprList::rev_impl_begin(NGrammar::expr const &rhs) {
+std::vector<size_t>::iterator TExprList::rev_impl_begin(NGrammar::expr const &rhs) {
     return rev_impl[rhs->get_hash()].begin();
 }
 
 std::vector<size_t>::iterator TExprList::rev_impl_end(NGrammar::expr const &rhs) {
     return rev_impl[rhs->get_hash()].end();
-}*/
+}
 
 size_t TExprList::size() const {
     return cnt;
 }
 
+// 3rd party indexation starts with 1
 NGrammar::expr TExprList::operator[](size_t index) {
-    return list[index];
+    assert(index > 0);
+    return list[index - 1];
 }
 
 std::vector<NGrammar::expr>::iterator TExprList::begin() {
@@ -60,6 +66,10 @@ bool TContext::has_hypothesis(NGrammar::expr const &hyp) {
     return hypothesis.contains(hyp);
 }
 
+NGrammar::expr TContext::get_statement() {
+    return result;
+}
+
 size_t TContext::size() const {
     return hypothesis.size();
 }
@@ -70,9 +80,9 @@ std::string TContext::to_suffix() {
 
 std::string TContext::to_string() {
     std::string res;
-    for (size_t i = 0; i < hypothesis.size(); i++) {
+    for (size_t i = 1; i <= hypothesis.size(); i++) {
         res += hypothesis[i]->to_string();
-        if (i + 1 < hypothesis.size()) {
+        if (i + 1 <= hypothesis.size()) {
             res += NGrammar::to_string(separator);
         }
         res += NGrammar::to_string(EToken::Space);

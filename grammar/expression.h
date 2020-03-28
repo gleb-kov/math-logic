@@ -31,32 +31,24 @@ struct TNode {
 
     virtual std::string to_string() const = 0;
 
-    virtual size_t calc_hash() const {
-        return std::hash<std::string>{}(to_string());
-    }
+    virtual size_t calc_hash() const;
 
-    virtual size_t get_hash() const {
-        return calc_hash();
-    }
+    virtual size_t get_hash() const;
 
-    virtual bool is_unary() const {
-        return false;
-    }
+    virtual bool is_unary() const;
 
-    virtual bool is_binary() const {
-        return false;
-    }
+    virtual bool is_binary() const;
 
-    virtual bool is_variable() const {
-        return false;
-    }
+    virtual bool is_variable() const;
 
-    virtual bool check_sign(EOperation) {
-        return false;
-    }
+    virtual bool check_sign(EOperation);
 
     friend bool operator==(NGrammar::expr const &lhs, NGrammar::expr const &rhs) {
         return lhs->get_hash() == rhs->get_hash();
+    }
+
+    friend bool operator!=(NGrammar::expr const &lhs, NGrammar::expr const &rhs) {
+        return lhs->get_hash() != rhs->get_hash();
     }
 };
 

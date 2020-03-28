@@ -1,8 +1,31 @@
 #include <cassert>
-#include <iostream>
 
 #include "expression.h"
 #include "../parser/parser_error.h"
+
+size_t TNode::calc_hash() const {
+    return std::hash<std::string>{}(to_string());
+}
+
+size_t TNode::get_hash() const {
+    return calc_hash();
+}
+
+bool TNode::is_unary() const {
+    return false;
+}
+
+bool TNode::is_binary() const {
+    return false;
+}
+
+bool TNode::is_variable() const {
+    return false;
+}
+
+bool TNode::check_sign(EOperation) {
+    return false;
+}
 
 TUnaryOperation::TUnaryOperation(EOperation const &sign, NGrammar::expr op)
         : sign(sign), operand(std::move(op)) {
@@ -113,40 +136,82 @@ NGrammar::var_expr NGrammar::to_variable(expr const &e) {
 }
 
 uint64_t NGrammar::check_axiom(NGrammar::expr const &e) {
-    if (!e->is_binary() || !e->check_sign(EOperation::Implication)) {
+    if (!e->check_sign(EOperation::Implication)) {
         return 0;
     }
     binary_expr impl = to_binary(e);
     auto lhs = impl->get_lhs();
     auto rhs = impl->get_rhs();
-    if (lhs->is_unary()) {
-        auto llhs = to_unary(lhs)->get_operand();
-        if (!lhs->check_sign(EOperation::Negation) || !llhs->check_sign(EOperation::Negation)) return 0;
-        if (to_unary(llhs)->get_operand() == rhs) {
-            return 10;
-        }
-        return 0;
-    } else if (lhs->check_sign(EOperation::Conjunction)) {
-        if (to_binary(lhs)->get_lhs() == rhs) {
+    if (rhs->check_sign(EOperation::Implication) && to_binary(rhs)->get_rhs() == lhs) {
+        return 1;
+    }
+    if (rhs->check_sign(EOperation::Implication) && to_binary(rhs)->get_rhs()->check_sign(EOperation::Conjunction)) {
+        auto tt = to_binary(to_binary(rhs)->get_rhs());
+        if (tt->get_lhs() == lhs && tt->get_rhs() == to_binary(rhs)->get_lhs()) {
             return 3;
         }
-        if (to_binary(lhs)->get_rhs() == rhs) {
+    }
+    if (lhs->check_sign(EOperation::Conjunction)) {
+        if (to_binary(lhs)->get_lhs() == rhs) {
             return 4;
         }
-    } else if (rhs->check_sign(EOperation::Disjunction)) {
+        if (to_binary(lhs)->get_rhs() == rhs) {
+            return 5;
+        }
+    }
+    if (rhs->check_sign(EOperation::Disjunction)) {
         if (to_binary(rhs)->get_lhs() == lhs) {
             return 6;
-        } else if (to_binary(rhs)->get_rhs() == lhs) {
+        }
+        if (to_binary(rhs)->get_rhs() == lhs) {
             return 7;
         }
-    } else if (rhs->check_sign(EOperation::Implication)) {
-        if (to_binary(rhs)->get_rhs() == lhs) {
-            return 1;
-        } else if (to_binary(rhs)->get_rhs()->check_sign(EOperation::Conjunction)) {
-            auto tt = to_binary(to_binary(rhs)->get_rhs());
-            if (tt->get_lhs() == lhs && tt->get_rhs() == to_binary(rhs)->get_lhs()) {
-                return 5;
+    }
+
+    if (lhs->check_sign(EOperation::Implication) &&
+        rhs->check_sign(EOperation::Implication) &&
+        to_binary(rhs)->get_lhs()->check_sign(EOperation::Implication)) {
+        auto lrhs = to_binary(rhs)->get_lhs();
+        auto rrhs = to_binary(rhs)->get_rhs();
+        auto rlrhs = to_binary(lrhs)->get_rhs();
+
+        auto l1 = to_binary(lhs)->get_lhs();
+        auto l2 = to_binary(lhs)->get_rhs();
+
+        if (rrhs->check_sign(EOperation::Implication)) {
+            auto lrrhs = to_binary(rrhs)->get_lhs();
+            auto rrrhs = to_binary(rrhs)->get_rhs();
+            if (rlrhs->check_sign(EOperation::Implication) &&
+                l1 == lrrhs &&
+                l1 == to_binary(lrhs)->get_lhs() &&
+                l2 == to_binary(rlrhs)->get_lhs() &&
+                rrrhs == to_binary(rlrhs)->get_rhs()) {
+                return 2;
             }
+            if (l2 == rlrhs &&
+                l2 == rrrhs &&
+                lrrhs->check_sign(EOperation::Disjunction) &&
+                l1 == to_binary(lrrhs)->get_lhs() &&
+                to_binary(lrhs)->get_lhs() == to_binary(lrrhs)->get_rhs()) {
+                return 8;
+            }
+        }
+        if (rrhs->check_sign(EOperation::Negation)) {
+            auto a = to_unary(rrhs)->get_operand();
+            if (rlrhs->check_sign(EOperation::Negation) &&
+                l2 == to_unary(rlrhs)->get_operand() &&
+                a == l1 &&
+                a == to_binary(lrhs)->get_lhs()) {
+                return 9;
+            }
+        }
+    }
+    if (lhs->is_unary()) {
+        auto llhs = to_unary(lhs)->get_operand();
+        if (lhs->check_sign(EOperation::Negation) &&
+            llhs->check_sign(EOperation::Negation) &&
+            to_unary(llhs)->get_operand() == rhs) {
+            return 10;
         }
     }
     return 0;

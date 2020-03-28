@@ -18,6 +18,7 @@ private:
 private:
     context head;
     TExprList proof;
+    TParser parser;
     // hypothesis, axiom or modus ponens
     std::vector<std::pair<size_t, uint64_t>> proof_state;
     // connected expr's in proof

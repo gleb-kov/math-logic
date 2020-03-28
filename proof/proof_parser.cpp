@@ -6,9 +6,11 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
     if (proof_body.empty()) {
         throw parser_error("Proof is incorrect");
     }
-    head = TParser().parse_context(statement);
+    head = parser.parse_context(statement);
+    parser.clear();
     for (size_t i = 0; i < proof_body.size(); i++) {
-        auto state = TParser().parse(proof_body[i]);
+        auto state = parser.parse(proof_body[i]);
+        parser.clear();
         if (i + 1 < proof_body.size() && proof.contains(state)) continue;
         if (head->has_hypothesis(state)) {
             uint64_t num = head->get_hypothesis(state);

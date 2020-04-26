@@ -1,7 +1,7 @@
 #include "parser.h"
 
 TParser::expr TParser::parse() {
-    if (begin >= end) return EMPTY_EXPR;
+    if (begin >= end) error();
     next_token();
     return parse_impl();
 }
@@ -23,7 +23,7 @@ TParser::context TParser::parse_context(std::string &s) {
 TParser::context TParser::parse_context(std::string::iterator from, std::string::iterator to) {
     begin = from;
     end = to;
-    if (begin >= end) return EMPTY_CONTEXT;
+    if (begin >= end) error();
     context result = std::make_shared<TContext>();
     next_token();
     if (token != EToken::Turnstile) {
@@ -87,14 +87,12 @@ TParser::expr TParser::parse_neg() {
 }
 
 TParser::expr TParser::parse_var() {
-    auto pos = begin;
-    if (TVariable::good_first_characher(*pos)) {
-        pos++;
-        while (pos < end && TVariable::good_character(*pos)) pos++;
-    }
     std::string::iterator tmp = begin;
-    begin = pos;
-    return std::make_shared<TVariable>(std::string(tmp, pos));
+    if (TVariable::good_first_characher(*begin)) {
+        begin++;
+        while (begin < end && TVariable::good_character(*begin)) begin++;
+    }
+    return std::make_shared<TVariable>(std::string(tmp, begin));
 }
 
 void TParser::next_token() {

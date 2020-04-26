@@ -40,6 +40,12 @@ NGrammar::expr TExprList::operator[](size_t index) {
     return list[index - 1];
 }
 
+// 3rd party indexation starts with 1
+NGrammar::expr TExprList::operator[](size_t index) const {
+    assert(index > 0);
+    return list[index - 1];
+}
+
 std::vector<NGrammar::expr>::iterator TExprList::begin() {
     return list.begin();
 }
@@ -78,12 +84,12 @@ std::string TContext::to_string() {
     std::string res;
     for (size_t i = 1; i <= hypothesis.size(); i++) {
         res += hypothesis[i]->to_string();
-        if (i + 1 <= hypothesis.size()) {
-            res += NGrammar::to_string(separator);
+        if (i < hypothesis.size()) {
+            res += NGrammar::SEPARATOR;
         }
-        res += NGrammar::to_string(EToken::Space);
+        res += NGrammar::SPACE;
     }
-    res += sign.to_string() + NGrammar::to_string(EToken::Space);
+    res += sign.to_string() + NGrammar::SPACE;
     res += result->to_string();
     return res;
 }

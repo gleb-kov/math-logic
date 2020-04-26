@@ -1,10 +1,11 @@
 #include <cassert>
+#include <queue>
 
 #include "proof_parser.h"
 
 TProofParser::TProofParser(std::string &statement, std::vector<std::string> &proof_body) {
     if (proof_body.empty()) {
-        throw parser_error("Proof is incorrect");
+        error();
     }
     head = parser.parse_context(statement);
     parser.clear();
@@ -23,7 +24,7 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
         } else {
             std::pair<size_t, size_t> mp = modus_ponens(state);
             if (mp.first == 0 || mp.second == 0) {
-                throw parser_error("Proof is incorrect");
+                error();
             }
             proof_state.emplace_back(2, 0);
             proof_dependency.push_back({mp.first, mp.second});
@@ -36,7 +37,7 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
     assert(last == proof_dependency.size());
 
     if (proof[last] != head->get_statement()) {
-        throw parser_error("Proof is incorrect");
+        error();
     }
 
     // minimize block
@@ -99,6 +100,10 @@ void TProofParser::print(std::ostream &s) {
         }
         s << "] " << proof[i + 1]->to_string() << std::endl;
     }
+}
+
+void TProofParser::error() {
+    throw parser_error("Proof is incorrect");
 }
 
 std::ostream &operator<<(std::ostream &s, TProofParser &solver) {

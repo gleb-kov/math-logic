@@ -1,6 +1,7 @@
-#include "grammar.h"
-
 #include <algorithm>
+#include <cassert>
+
+#include "grammar.h"
 
 bool NGrammar::is_binary(EOperation sign) {
     return std::find(BINARY.begin(), BINARY.end(), sign) != BINARY.end();
@@ -18,7 +19,7 @@ bool NGrammar::is_hidden(EToken sign) {
     return std::find(HIDDEN.begin(), HIDDEN.end(), sign) != HIDDEN.end();
 }
 
-std::string NGrammar::to_string(EOperation sign) {
+std::string NGrammar::to_string(EOperation sign) noexcept {
     switch (sign) {
         case EOperation::Turnstile:
             return "|-";
@@ -31,11 +32,12 @@ std::string NGrammar::to_string(EOperation sign) {
         case EOperation::Negation:
             return "!";
         default:
-            throw std::runtime_error("unsupported token");
+            assert(false);
+            return "";
     }
 }
 
-std::string NGrammar::to_string(EToken sign) {
+std::string NGrammar::to_string(EToken sign) noexcept {
     switch (sign) {
         case EToken::Turnstile:
             return "|-";
@@ -60,7 +62,8 @@ std::string NGrammar::to_string(EToken sign) {
         case EToken::NewLine:
             return "\r";
         default:
-            throw std::runtime_error("unsupported token");
+            assert(false);
+            return "";
     }
 }
 

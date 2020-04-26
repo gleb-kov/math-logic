@@ -1,7 +1,6 @@
 #ifndef MATLOG_PROOF_H
 #define MATLOG_PROOF_H
 
-#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -29,6 +28,8 @@ public:
     size_t size() const;
 
     NGrammar::expr operator[](size_t index);
+
+    NGrammar::expr operator[](size_t index) const;
 
     std::vector<NGrammar::expr>::iterator begin();
 

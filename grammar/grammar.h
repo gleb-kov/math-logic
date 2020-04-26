@@ -82,9 +82,14 @@ namespace NGrammar {
 
     bool is_hidden(EToken);
 
-    std::string to_string(EOperation);
+    std::string to_string(EOperation) noexcept;
 
-    std::string to_string(EToken);
+    std::string to_string(EToken) noexcept;
+
+    const static auto SPACE = NGrammar::to_string(EToken::Space);
+    const static auto SEPARATOR = NGrammar::to_string(EToken::Comma);
+    const static auto LEFT_BRACE = NGrammar::to_string(EToken::LeftBrace);
+    const static auto RIGHT_BRACE = NGrammar::to_string(EToken::RightBrace);
 }
 
 struct TOperation {

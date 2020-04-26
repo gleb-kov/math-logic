@@ -1,11 +1,9 @@
 #ifndef MATLOG_PROOF_PARSER_H
 #define MATLOG_PROOF_PARSER_H
 
-#include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
-#include <queue>
 
 #include "../parser/parser.h"
 #include "../parser/parser_error.h"
@@ -33,6 +31,8 @@ public:
     std::pair<size_t, size_t> modus_ponens(expr const &);
 
     void print(std::ostream &);
+
+    [[noreturn]] void error() noexcept(false);
 };
 
 std::ostream &operator<<(std::ostream &s, TProofParser &);

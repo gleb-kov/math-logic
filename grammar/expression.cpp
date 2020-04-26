@@ -1,7 +1,8 @@
 #include <cassert>
 
 #include "expression.h"
-#include "../parser/parser_error.h"
+
+using namespace NGrammar;
 
 size_t TNode::calc_hash() const {
     return std::hash<std::string>{}(to_string());
@@ -27,7 +28,7 @@ bool TNode::check_sign(EOperation) {
     return false;
 }
 
-TUnaryOperation::TUnaryOperation(EOperation const &sign, NGrammar::expr op)
+TUnaryOperation::TUnaryOperation(EOperation const &sign, expr op)
         : sign(sign), operand(std::move(op)) {
     assert(NGrammar::is_unary(sign));
     hash = calc_hash();
@@ -41,7 +42,7 @@ std::string TUnaryOperation::to_string() const {
     return sign.to_string() + operand->to_string();
 }
 
-NGrammar::expr TUnaryOperation::get_operand() const {
+expr TUnaryOperation::get_operand() const {
     return operand;
 }
 
@@ -57,25 +58,25 @@ bool TUnaryOperation::check_sign(EOperation cmp) {
     return sign.get_sign() == cmp;
 }
 
-TBinaryOperation::TBinaryOperation(EOperation const &sign, NGrammar::expr lhs, NGrammar::expr rhs)
+TBinaryOperation::TBinaryOperation(EOperation const &sign, expr lhs, expr rhs)
         : sign(sign), lhs(std::move(lhs)), rhs(std::move(rhs)) {
     assert(NGrammar::is_binary(sign));
     hash = calc_hash();
 }
 
 std::string TBinaryOperation::to_suffix() const {
-    return '(' + sign.to_string() + ',' + lhs->to_suffix() + ',' + rhs->to_suffix() + ')';
+    return LEFT_BRACE + sign.to_string() + SEPARATOR + lhs->to_suffix() + SEPARATOR + rhs->to_suffix() + RIGHT_BRACE;
 }
 
 std::string TBinaryOperation::to_string() const {
-    return '(' + lhs->to_string() + ' ' + sign.to_string() + ' ' + rhs->to_string() + ')';
+    return LEFT_BRACE + lhs->to_string() + SPACE + sign.to_string() + SPACE + rhs->to_string() + RIGHT_BRACE;
 }
 
-NGrammar::expr TBinaryOperation::get_lhs() const {
+expr TBinaryOperation::get_lhs() const {
     return lhs;
 }
 
-NGrammar::expr TBinaryOperation::get_rhs() const {
+expr TBinaryOperation::get_rhs() const {
     return rhs;
 }
 
@@ -123,19 +124,19 @@ size_t TVariable::get_hash() const {
     return hash;
 }
 
-NGrammar::unary_expr NGrammar::to_unary(expr const &e) {
+unary_expr NGrammar::to_unary(expr const &e) {
     return std::dynamic_pointer_cast<TUnaryOperation>(e);
 }
 
-NGrammar::binary_expr NGrammar::to_binary(expr const &e) {
+binary_expr NGrammar::to_binary(expr const &e) {
     return std::dynamic_pointer_cast<TBinaryOperation>(e);
 }
 
-NGrammar::var_expr NGrammar::to_variable(expr const &e) {
+var_expr NGrammar::to_variable(expr const &e) {
     return std::dynamic_pointer_cast<TVariable>(e);
 }
 
-uint64_t NGrammar::check_axiom(NGrammar::expr const &e) {
+uint64_t NGrammar::check_axiom(expr const &e) {
     if (!e->check_sign(EOperation::Implication)) {
         return 0;
     }
@@ -217,7 +218,7 @@ uint64_t NGrammar::check_axiom(NGrammar::expr const &e) {
     return 0;
 }
 
-bool NGrammar::is_axiom(NGrammar::expr const &e) {
+bool NGrammar::is_axiom(expr const &e) {
     return check_axiom(e) != 0;
 }
 

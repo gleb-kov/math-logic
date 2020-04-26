@@ -16,8 +16,6 @@ private:
     EToken token = EToken::None;
     std::string::iterator begin;
     std::string::iterator end;
-    const expr EMPTY_EXPR = std::shared_ptr<TNode>(nullptr);
-    const context EMPTY_CONTEXT = std::shared_ptr<TContext>(nullptr);
 
 private:
     [[nodiscard]] expr parse();
@@ -36,9 +34,9 @@ private:
 
     [[nodiscard]] EToken starts_with();
 
-    [[noreturn]] void error() noexcept(false);
-
     void shift_token();
+
+    [[noreturn]] void error() noexcept(false);
 
 public:
     TParser() = default;

@@ -36,7 +36,7 @@ private:
 
     [[nodiscard]] EToken starts_with();
 
-    void error() noexcept(false);
+    [[noreturn]] void error() noexcept(false);
 
     void shift_token();
 

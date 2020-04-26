@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "proof/proof_parser.h"
+#include "parser/proof_parser.h"
 #include "parser/parser_error.h"
 
 int main() {
@@ -10,7 +10,7 @@ int main() {
     getline(std::cin, head);
     std::vector<std::string> body;
     while (getline(std::cin, step)) {
-        body.push_back(step);
+        body.emplace_back(step);
     }
     try {
         TProofParser solver(head, body);

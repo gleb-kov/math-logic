@@ -1,10 +1,9 @@
 #ifndef MATLOG_GRAMMAR_H
 #define MATLOG_GRAMMAR_H
 
+#include <array>
 #include <memory>
 #include <string>
-#include <unordered_map>
-#include <vector>
 
 enum class EToken {
     Turnstile,
@@ -38,18 +37,18 @@ namespace NGrammar {
     using expr = std::shared_ptr<TNode>;
     using context = std::shared_ptr<TContext>;
 
-    constexpr EOperation BINARY_OPERATIONS[] = {
+    constexpr std::array<EOperation, 4> BINARY= {
             EOperation::Turnstile,
             EOperation::Implication,
             EOperation::Disjunction,
             EOperation::Conjunction,
     };
 
-    constexpr EOperation UNARY_OPERATIONS[] = {
+    constexpr std::array<EOperation, 1> UNARY = {
             EOperation::Negation
     };
 
-    constexpr EToken TOKEN_OPERATIONS[] = {
+    constexpr std::array<EToken, 11> OPERATIONS = {
             EToken::Turnstile,
             EToken::Implication,
             EToken::Disjunction,
@@ -63,13 +62,13 @@ namespace NGrammar {
             EToken::NewLine
     };
 
-    const EToken HIDDEN_TOKEN[] = {
+    constexpr std::array<EToken, 3> HIDDEN = {
             EToken::Variable,
             EToken::None,
             EToken::Error
     };
 
-    constexpr EToken SKIPPABLE[]{
+    constexpr std::array<EToken, 3> SKIPPABLE = {
             EToken::Space,
             EToken::Tab,
             EToken::NewLine

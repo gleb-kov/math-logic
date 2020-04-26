@@ -15,29 +15,30 @@ add_library(grammar STATIC
         grammar/expression.h
         grammar/expression.cpp)
 
-add_executable(tests test.cpp
-        parser/parser.h
-        parser/parser.cpp)
-
-add_executable(task1 task1_parse.cpp
+add_library(parser STATIC
         parser/parser.h
         parser/parser.cpp
+
+        parser/proof_parser.h
+        parser/proof_parser.cpp
+
         parser/parser_error.h)
 
-add_executable(task2 task2_minimize.cpp
-        parser/parser.h
-        parser/parser.cpp
-        proof/proof_parser.h
-        proof/proof_parser.cpp
-        parser/parser_error.h)
+target_link_libraries(parser grammar)
 
-target_link_libraries(tests grammar)
+add_executable(tests test.cpp)
 
-target_link_libraries(task1 grammar)
+add_executable(task1 task1_parse.cpp)
 
-target_link_libraries(task2 grammar)
+add_executable(task2 task2_minimize.cpp)
+
+target_link_libraries(tests grammar parser)
+
+target_link_libraries(task1 grammar parser)
+
+target_link_libraries(task2 grammar parser)
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ggdb -std=c++11 -pedantic -O2 -flto")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ggdb -std=c++17 -pedantic -O3 -flto")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -fsanitize=address,undefined,leak")
 endif ()

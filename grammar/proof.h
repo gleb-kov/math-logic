@@ -61,8 +61,6 @@ public:
 
     size_t size() const;
 
-    [[deprecated]] std::string to_suffix();
-
     std::string to_string();
 };
 

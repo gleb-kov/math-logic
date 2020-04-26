@@ -1,39 +1,21 @@
 #include "grammar.h"
 
+#include <algorithm>
+
 bool NGrammar::is_binary(EOperation sign) {
-    for (EOperation s : BINARY_OPERATIONS) {
-        if (s == sign) {
-            return true;
-        }
-    }
-    return false;
+    return std::find(BINARY.begin(), BINARY.end(), sign) != BINARY.end();
 }
 
 bool NGrammar::is_unary(EOperation sign) {
-    for (EOperation s : UNARY_OPERATIONS) {
-        if (s == sign) {
-            return true;
-        }
-    }
-    return false;
+    return std::find(UNARY.begin(), UNARY.end(), sign) != UNARY.end();
 }
 
 bool NGrammar::is_skippable(EToken sign) {
-    for (EToken s : SKIPPABLE) {
-        if (s == sign) {
-            return true;
-        }
-    }
-    return false;
+    return std::find(SKIPPABLE.begin(), SKIPPABLE.end(), sign) != SKIPPABLE.end();
 }
 
 bool NGrammar::is_hidden(EToken sign) {
-    for (EToken s : HIDDEN_TOKEN) {
-        if (s == sign) {
-            return true;
-        }
-    }
-    return false;
+    return std::find(HIDDEN.begin(), HIDDEN.end(), sign) != HIDDEN.end();
 }
 
 std::string NGrammar::to_string(EOperation sign) {

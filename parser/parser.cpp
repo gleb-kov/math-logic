@@ -114,7 +114,7 @@ EToken TParser::starts_with() {
     if (begin >= end) {
         return EToken::None;
     }
-    for (auto op : NGrammar::TOKEN_OPERATIONS) {
+    for (auto op : NGrammar::OPERATIONS) {
         std::string prefix = NGrammar::to_string(op);
         std::string::iterator fake = begin;
         size_t ind = 0;

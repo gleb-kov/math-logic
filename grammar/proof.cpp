@@ -74,10 +74,6 @@ size_t TContext::size() const {
     return hypothesis.size();
 }
 
-std::string TContext::to_suffix() {
-    return to_string();
-}
-
 std::string TContext::to_string() {
     std::string res;
     for (size_t i = 1; i <= hypothesis.size(); i++) {

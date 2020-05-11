@@ -1,6 +1,6 @@
 COMPILE=g++ -std=c++17 -O3 -flto
 
-grammar=grammar/grammar.h grammar/grammar.cpp grammar/expression.h grammar/expression.cpp grammar/proof.h grammar/proof.cpp grammar/lib.h
+grammar=grammar/grammar.h grammar/expression.h grammar/expression.cpp grammar/proof.h grammar/proof.cpp grammar/lib.h
 parser=parser/parser.h parser/parser.cpp parser/proof_parser.h parser/proof_parser.cpp parser/parser_error.h
 
 all: 

@@ -11,6 +11,7 @@ class TParser {
 private:
     using expr = NGrammar::expr;
     using context = NGrammar::context;
+    using siter = std::string::iterator;
 
 private:
     EToken token = EToken::None;
@@ -18,7 +19,7 @@ private:
     std::string::iterator end;
 
 private:
-    [[nodiscard]] expr parse();
+    [[nodiscard, gnu::hot]] expr parse();
 
     [[nodiscard]] expr parse_impl();
 
@@ -30,11 +31,11 @@ private:
 
     [[nodiscard]] expr parse_var();
 
-    void next_token();
+    [[gnu::hot]] void next_token();
 
-    [[nodiscard]] EToken starts_with();
+    [[nodiscard, gnu::hot]] EToken starts_with();
 
-    void shift_token();
+    [[gnu::hot]] void shift_token();
 
     [[noreturn]] void error() noexcept(false);
 
@@ -43,11 +44,11 @@ public:
 
     [[nodiscard]] expr parse(std::string &s);
 
-    [[nodiscard]] expr parse(std::string::iterator from, std::string::iterator to);
+    [[nodiscard]] expr parse(siter from, siter to);
 
     [[nodiscard]] context parse_context(std::string &);
 
-    [[nodiscard]] context parse_context(std::string::iterator from, std::string::iterator to);
+    [[nodiscard]] context parse_context(siter from, siter to);
 
     void clear();
 };

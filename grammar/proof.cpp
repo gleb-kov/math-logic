@@ -85,11 +85,11 @@ std::string TContext::to_string() {
     for (size_t i = 1; i <= hypothesis.size(); i++) {
         res += hypothesis[i]->to_string();
         if (i < hypothesis.size()) {
-            res += NGrammar::SEPARATOR;
+            res += ',';
         }
-        res += NGrammar::SPACE;
+        res += ' ';
     }
-    res += sign.to_string() + NGrammar::SPACE;
+    res += sign.to_string() + ' ';
     res += result->to_string();
     return res;
 }

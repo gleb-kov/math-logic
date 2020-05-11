@@ -146,9 +146,9 @@ bool start() {
 
 int main() {
     if (!start()) {
-        std::cerr << "FAILED";
+        std::cerr << "FAILED\n";
     } else {
-        std::cerr << "PASSED";
+        std::cerr << "PASSED\n";
     }
     return 0;
 }

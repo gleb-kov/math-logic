@@ -15,13 +15,13 @@ namespace NGrammar {
     using binary_expr = std::shared_ptr<TBinaryOperation>;
     using var_expr = std::shared_ptr<TVariable>;
 
-    unary_expr to_unary(expr const &);
+    [[gnu::pure, nodiscard]] unary_expr to_unary(expr const &);
 
-    binary_expr to_binary(expr const &);
+    [[gnu::pure, nodiscard]] binary_expr to_binary(expr const &);
 
-    var_expr to_variable(expr const &);
+    [[gnu::pure, nodiscard]] var_expr to_variable(expr const &);
 
-    uint64_t check_axiom(expr const &);
+    [[gnu::pure, nodiscard, gnu::hot]] uint64_t check_axiom(expr const &);
 
     bool is_axiom(expr const &);
 }
@@ -117,9 +117,9 @@ public:
 
     bool is_variable() const override;
 
-    static bool good_first_characher(char);
+    [[gnu::pure]] static bool good_first_characher(char);
 
-    static bool good_character(char);
+    [[gnu::pure]] static bool good_character(char);
 };
 
 namespace std {

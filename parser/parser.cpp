@@ -10,7 +10,7 @@ TParser::expr TParser::parse(std::string &s) {
     return parse(s.begin(), s.end());
 }
 
-TParser::expr TParser::parse(std::string::iterator from, std::string::iterator to) {
+TParser::expr TParser::parse(siter from, siter to) {
     begin = from;
     end = to;
     return parse();
@@ -20,7 +20,7 @@ TParser::context TParser::parse_context(std::string &s) {
     return parse_context(s.begin(), s.end());
 }
 
-TParser::context TParser::parse_context(std::string::iterator from, std::string::iterator to) {
+TParser::context TParser::parse_context(siter from, siter to) {
     begin = from;
     end = to;
     if (begin >= end) error();
@@ -87,7 +87,7 @@ TParser::expr TParser::parse_neg() {
 }
 
 TParser::expr TParser::parse_var() {
-    std::string::iterator tmp = begin;
+    siter tmp = begin;
     if (TVariable::good_first_characher(*begin)) {
         begin++;
         while (begin < end && TVariable::good_character(*begin)) begin++;
@@ -113,8 +113,8 @@ EToken TParser::starts_with() {
         return EToken::None;
     }
     for (auto op : NGrammar::OPERATIONS) {
-        std::string prefix = NGrammar::to_string(op);
-        std::string::iterator fake = begin;
+        std::string_view prefix = NGrammar::to_string(op);
+        siter fake = begin;
         size_t ind = 0;
         while (fake < end && ind < prefix.size()) {
             if (*fake != prefix[ind]) break;

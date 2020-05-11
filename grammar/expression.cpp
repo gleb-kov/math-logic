@@ -65,11 +65,11 @@ TBinaryOperation::TBinaryOperation(EOperation const &sign, expr lhs, expr rhs)
 }
 
 std::string TBinaryOperation::to_suffix() const {
-    return LEFT_BRACE + sign.to_string() + SEPARATOR + lhs->to_suffix() + SEPARATOR + rhs->to_suffix() + RIGHT_BRACE;
+    return '(' + sign.to_string() + ',' + lhs->to_suffix() + ',' + rhs->to_suffix() + ')';
 }
 
 std::string TBinaryOperation::to_string() const {
-    return LEFT_BRACE + lhs->to_string() + SPACE + sign.to_string() + SPACE + rhs->to_string() + RIGHT_BRACE;
+    return '(' + lhs->to_string() + ' ' + sign.to_string() + ' ' + rhs->to_string() + ')';
 }
 
 expr TBinaryOperation::get_lhs() const {
@@ -108,12 +108,12 @@ std::string TVariable::to_string() const {
     return name;
 }
 
-bool TVariable::good_first_characher(char c) {
-    return 'A' <= c && c <= 'Z';
-}
-
 bool TVariable::is_variable() const {
     return true;
+}
+
+bool TVariable::good_first_characher(char c) {
+    return 'A' <= c && c <= 'Z';
 }
 
 bool TVariable::good_character(char c) {

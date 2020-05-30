@@ -2,7 +2,7 @@
 
 #include "proof.h"
 
-void TExprList::add(NGrammar::expr const &e) {
+void TExprList::add(expr const &e) {
     size_t pos = ++cnt;
     size_t h = e->get_hash();
     table[h] = pos;
@@ -13,25 +13,37 @@ void TExprList::add(NGrammar::expr const &e) {
     }
 }
 
-size_t TExprList::get_index(NGrammar::expr const &e) {
+size_t TExprList::get_index(expr const &e) const {
     auto pos = table.find(e->get_hash());
     return (pos == table.end() ? 0 : pos->second);
 }
 
-bool TExprList::contains(NGrammar::expr const &e) {
+bool TExprList::contains(expr const &e) const {
     return get_index(e) != 0;
 }
 
-std::vector<size_t>::iterator TExprList::rev_impl_begin(NGrammar::expr const &rhs) {
-    return rev_impl[rhs->get_hash()].begin();
+bool TExprList::contains_rev(const expr & e) const {
+    return (rev_impl.find(e->get_hash()) != rev_impl.end());
 }
 
-std::vector<size_t>::iterator TExprList::rev_impl_end(NGrammar::expr const &rhs) {
-    return rev_impl[rhs->get_hash()].end();
+std::vector<size_t>::const_iterator TExprList::rev_impl_begin(expr const &rhs) {
+    return rev_impl[rhs->get_hash()].cbegin();
+    auto pos = rev_impl.find(rhs->get_hash())->second;
+    return pos.cbegin();
+}
+
+std::vector<size_t>::const_iterator TExprList::rev_impl_end(expr const &rhs) {
+    return rev_impl[rhs->get_hash()].cend();
+    auto pos = rev_impl.find(rhs->get_hash())->second;
+    return pos.cend();
 }
 
 size_t TExprList::size() const {
     return cnt;
+}
+
+NGrammar::expr TExprList::back() const {
+    return list.back();
 }
 
 // 3rd party indexation starts with 1
@@ -56,19 +68,19 @@ std::vector<NGrammar::expr>::iterator TExprList::end() {
 
 TContext::TContext() : sign(EOperation::Turnstile), separator(EToken::Comma) {}
 
-void TContext::add_hypothesis(NGrammar::expr const &hyp) {
+void TContext::add_hypothesis(expr const &hyp) {
     hypothesis.add(hyp);
 }
 
-void TContext::set_statement(NGrammar::expr const &res) {
+void TContext::set_statement(expr const &res) {
     result = res;
 }
 
-size_t TContext::get_hypothesis(NGrammar::expr const &hyp) {
+size_t TContext::get_hypothesis(expr const &hyp) {
     return hypothesis.get_index(hyp);
 }
 
-bool TContext::has_hypothesis(NGrammar::expr const &hyp) {
+bool TContext::has_hypothesis(expr const &hyp) {
     return hypothesis.contains(hyp);
 }
 
@@ -92,6 +104,22 @@ std::string TContext::to_string() {
     res += sign.to_string() + ' ';
     res += result->to_string();
     return res;
+}
+
+std::pair<size_t, size_t> NGrammar::check_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
+    for (auto it = proof.rev_impl_begin(e); it != proof.rev_impl_end(e); it++) {
+        size_t rhs_ind = *it;
+        auto rhs = proof[rhs_ind];
+        auto needed_lhs = NGrammar::to_binary(rhs)->get_lhs();
+        size_t lhs_ind = proof.get_index(needed_lhs);
+        if (lhs_ind) return {rhs_ind, lhs_ind};
+    }
+    return {0, 0};
+}
+
+bool NGrammar::is_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
+    auto mp = check_modus_ponens(proof, e);
+    return mp.first != 0 && mp.second != 0;
 }
 
 std::ostream &operator<<(std::ostream &s, TContext &e) {

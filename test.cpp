@@ -85,7 +85,7 @@ bool task2_tests() {
     return true;
 }
 
-bool axiom_tests() {
+bool axiom_scheme_tests() {
     std::array<std::string, 10> axioms = {
             "A -> B -> A",
             "(A -> B) -> ((A -> B -> C) -> (A -> C))",
@@ -100,7 +100,7 @@ bool axiom_tests() {
     };
     bool flag = true;
     for (size_t i = 0; i < axioms.size(); i++) {
-        auto t = NGrammar::check_axiom(TParser().parse(axioms[i]));
+        auto t = NGrammar::check_axiom_scheme(TParser().parse(axioms[i]));
         if (t != i + 1) {
             flag = false;
             std::cout << i + 1 << " axiom failed: got " << t << std::endl;
@@ -127,7 +127,7 @@ bool anti_axiom_tests() {
     };
     bool flag = false;
     for (size_t i = 0; i < fake.size(); i++) {
-        auto t = NGrammar::check_axiom(TParser().parse(fake[i]));
+        auto t = NGrammar::check_axiom_scheme(TParser().parse(fake[i]));
         if (t != 0) {
             flag = true;
             std::cout << i + 1 << " fake-axiom failed: got " << t << std::endl;
@@ -140,8 +140,7 @@ bool start() {
     if (!task1_tests()) return false;
     if (!task2_tests()) return false;
     if (!anti_axiom_tests()) return false;
-    if (!axiom_tests()) return false;
-    return true;
+    return axiom_scheme_tests();
 }
 
 int main() {

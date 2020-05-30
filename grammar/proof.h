@@ -10,60 +10,76 @@
 
 struct TExprList {
 private:
+    using expr = NGrammar::expr;
+
+private:
     size_t cnt = 0;
     std::unordered_map<size_t, size_t> table;
-    std::vector<NGrammar::expr> list;
+    std::vector<expr> list;
     // indices of expr's where rhs is given implication
     std::unordered_map<size_t, std::vector<size_t>> rev_impl;
 
 public:
     TExprList() = default;
 
-    void add(NGrammar::expr const &);
+    void add(expr const &);
 
-    size_t get_index(NGrammar::expr const &);
+    size_t get_index(expr const &) const;
 
-    bool contains(NGrammar::expr const &);
+    bool contains(expr const &) const;
+
+    bool contains_rev(expr const &) const;
 
     size_t size() const;
 
-    NGrammar::expr operator[](size_t index);
+    expr back() const;
 
-    NGrammar::expr operator[](size_t index) const;
+    expr operator[](size_t index);
 
-    std::vector<NGrammar::expr>::iterator begin();
+    expr operator[](size_t index) const;
 
-    std::vector<NGrammar::expr>::iterator end();
+    std::vector<expr>::iterator begin();
 
-    std::vector<size_t>::iterator rev_impl_begin(NGrammar::expr const &);
+    std::vector<expr>::iterator end();
 
-    std::vector<size_t>::iterator rev_impl_end(NGrammar::expr const &);
+    std::vector<size_t>::const_iterator rev_impl_begin(expr const &);
+
+    std::vector<size_t>::const_iterator rev_impl_end(expr const &);
 };
 
 struct TContext {
 private:
+    using expr = NGrammar::expr;
+
+private:
     const TOperation sign;
     const EToken separator;
-    NGrammar::expr result;
+    expr result;
     TExprList hypothesis;
 
 public:
     TContext();
 
-    void add_hypothesis(NGrammar::expr const &);
+    void add_hypothesis(expr const &);
 
-    void set_statement(NGrammar::expr const &);
+    void set_statement(expr const &);
 
-    size_t get_hypothesis(NGrammar::expr const &);
+    size_t get_hypothesis(expr const &);
 
-    bool has_hypothesis(NGrammar::expr const &);
+    bool has_hypothesis(expr const &);
 
-    NGrammar::expr get_statement();
+    expr get_statement();
 
     size_t size() const;
 
     std::string to_string();
 };
+
+namespace NGrammar {
+    [[gnu::pure, nodiscard, gnu::hot]] std::pair<size_t, size_t> check_modus_ponens(TExprList &, expr const &);
+
+    bool is_modus_ponens(TExprList &, expr const &);
+}
 
 std::ostream &operator<<(std::ostream &s, TContext &);
 

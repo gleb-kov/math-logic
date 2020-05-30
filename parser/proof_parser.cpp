@@ -12,17 +12,20 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
     for (size_t i = 0; i < proof_body.size(); i++) {
         auto state = parser.parse(proof_body[i]);
         parser.clear();
+
+        uint64_t scheme_num = 0;
+
         if (i + 1 < proof_body.size() && proof.contains(state)) continue;
+
         if (head->has_hypothesis(state)) {
             uint64_t num = head->get_hypothesis(state);
             proof_state.emplace_back(0, num);
             proof_dependency.emplace_back();
-        } else if (NGrammar::is_axiom(state)) {
-            uint64_t num = NGrammar::check_axiom(state);
-            proof_state.emplace_back(1, num);
+        } else if ((scheme_num = NGrammar::check_axiom_scheme(state)) != 0) {
+            proof_state.emplace_back(1, scheme_num);
             proof_dependency.emplace_back();
         } else {
-            std::pair<size_t, size_t> mp = modus_ponens(state);
+            std::pair<size_t, size_t> mp = NGrammar::check_modus_ponens(proof, state);
             if (mp.first == 0 || mp.second == 0) {
                 error();
             }
@@ -31,16 +34,25 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
         }
         proof.add(state);
     }
-    size_t last = proof.size();
 
-    assert(last == proof_state.size());
-    assert(last == proof_dependency.size());
+    assert(proof.size() == proof_state.size());
+    assert(proof.size() == proof_dependency.size());
 
-    if (proof[last] != head->get_statement()) {
+    if (proof.back() != head->get_statement()) {
         error();
     }
+}
 
-    // minimize block
+NGrammar::context TProofParser::get_context() const {
+    return head;
+}
+
+size_t TProofParser::proof_size() const {
+    return proof.size();
+}
+
+void TProofParser::minimize() {
+    size_t last = proof.size();
     renumeration.assign(last + 1, 0);
     std::queue<size_t> dep({last});
     renumeration[last] = 1;
@@ -59,21 +71,6 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
         cnt += renumeration[i];
         if (renumeration[i]) renumeration[i] = cnt;
     }
-}
-
-NGrammar::context TProofParser::get_context() const {
-    return head;
-}
-
-std::pair<size_t, size_t> TProofParser::modus_ponens(NGrammar::expr const &e) {
-    for (auto it = proof.rev_impl_begin(e); it != proof.rev_impl_end(e); it++) {
-        size_t rhs_ind = *it;
-        auto rhs = proof[rhs_ind];
-        auto needed_lhs = NGrammar::to_binary(rhs)->get_lhs();
-        size_t lhs_ind = proof.get_index(needed_lhs);
-        if (lhs_ind) return {rhs_ind, lhs_ind};
-    }
-    return {0, 0};
 }
 
 void TProofParser::print(std::ostream &s) {

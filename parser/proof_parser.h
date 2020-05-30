@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "../grammar/lib.h"
 #include "../parser/parser.h"
 #include "../parser/parser_error.h"
 
@@ -28,7 +29,9 @@ public:
 
     context get_context() const;
 
-    std::pair<size_t, size_t> modus_ponens(expr const &);
+    size_t proof_size() const;
+
+    void minimize();
 
     void print(std::ostream &);
 

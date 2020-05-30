@@ -136,7 +136,7 @@ var_expr NGrammar::to_variable(expr const &e) {
     return std::dynamic_pointer_cast<TVariable>(e);
 }
 
-uint64_t NGrammar::check_axiom(expr const &e) {
+uint64_t NGrammar::check_axiom_scheme(expr const &e) {
     if (!e->check_sign(EOperation::Implication)) {
         return 0;
     }
@@ -218,8 +218,24 @@ uint64_t NGrammar::check_axiom(expr const &e) {
     return 0;
 }
 
+bool NGrammar::is_axiom_scheme(expr const &e) {
+    return check_axiom_scheme(e) != 0;
+}
+
+uint64_t NGrammar::check_axiom(expr const &e) {
+    return 0;
+}
+
 bool NGrammar::is_axiom(expr const &e) {
-    return check_axiom(e) != 0;
+    return false;
+}
+
+uint64_t NGrammar::check_intro_rule(expr const &e) {
+    return 0;
+}
+
+bool NGrammar::is_intro_rule(expr const &e) {
+    return false;
 }
 
 std::ostream &operator<<(std::ostream &s, TNode &e) {

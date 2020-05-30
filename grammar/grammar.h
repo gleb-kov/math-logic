@@ -14,6 +14,10 @@ enum class EToken {
     Disjunction,
     Conjunction,
     Negation,
+    Addition,
+    Multiplication,
+    Universal,
+    Existential,
     LeftBrace,
     RightBrace,
     Comma,
@@ -30,7 +34,9 @@ enum class EOperation {
     Implication,
     Disjunction,
     Conjunction,
-    Negation
+    Negation,
+    Addition,
+    Multiplication
 };
 
 struct TNode;
@@ -105,6 +111,10 @@ namespace NGrammar {
                 return "&";
             case EOperation::Negation:
                 return "!";
+            case EOperation::Addition:
+                return "+";
+            case EOperation::Multiplication:
+                return "*";
             default:
                 assert(false);
                 return "";
@@ -123,6 +133,14 @@ namespace NGrammar {
                 return "&";
             case EToken::Negation:
                 return "!";
+            case EToken::Addition:
+                return "+";
+            case EToken::Multiplication:
+                return "*";
+            case EToken::Universal:
+                return "@";
+            case EToken::Existential:
+                return "?";
             case EToken::LeftBrace:
                 return "(";
             case EToken::RightBrace:
@@ -150,7 +168,7 @@ public:
     explicit TOperation(EOperation sign) : sign(sign) {}
 
     [[nodiscard]] std::string to_string() const {
-        return std::string(NGrammar::to_string(sign));
+        return NGrammar::to_string(sign).data();
     }
 
     EOperation get_sign() const {

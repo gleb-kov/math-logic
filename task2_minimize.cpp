@@ -14,6 +14,7 @@ int main() {
     }
     try {
         TProofParser solver(head, body);
+        solver.minimize();
         std::cout << solver;
     } catch (parser_error const &error) {
         std::cout << error.what();

@@ -21,9 +21,19 @@ namespace NGrammar {
 
     [[gnu::pure, nodiscard]] var_expr to_variable(expr const &);
 
-    [[gnu::pure, nodiscard, gnu::hot]] uint64_t check_axiom(expr const &);
+
+
+    [[gnu::pure, nodiscard, gnu::hot]] uint64_t check_axiom_scheme(expr const &);
+
+    bool is_axiom_scheme(expr const &);
+
+    [[deprecated("undefined"), gnu::pure, nodiscard, gnu::hot]] uint64_t check_axiom(expr const &);
 
     bool is_axiom(expr const &);
+
+    [[deprecated("undefined"), gnu::pure, nodiscard, gnu::hot]] uint64_t check_intro_rule(expr const &);
+
+    bool is_intro_rule(expr const &);
 }
 
 struct TNode {

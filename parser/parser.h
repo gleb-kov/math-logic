@@ -5,7 +5,7 @@
 #include <string>
 
 #include "../grammar/lib.h"
-#include "parser_error.h"
+#include "errors.h"
 
 class TParser {
 private:

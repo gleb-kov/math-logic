@@ -3,9 +3,9 @@
 
 #include "proof_parser.h"
 
-TProofParser::TProofParser(std::string &statement, std::vector<std::string> &proof_body) {
+TProofParser::TProofParser(std::string &statement, std::vector<std::string> &proof_body, bool verbose) {
     if (proof_body.empty()) {
-        error();
+        error(verbose);
     }
     head = parser.parse_context(statement);
     parser.clear();
@@ -27,7 +27,7 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
         } else {
             std::pair<size_t, size_t> mp = NGrammar::check_modus_ponens(proof, state);
             if (mp.first == 0 || mp.second == 0) {
-                error();
+                error(verbose);
             }
             proof_state.emplace_back(2, 0);
             proof_dependency.push_back({mp.first, mp.second});
@@ -35,11 +35,8 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
         proof.add(state);
     }
 
-    assert(proof.size() == proof_state.size());
-    assert(proof.size() == proof_dependency.size());
-
     if (proof.back() != head->get_statement()) {
-        error();
+        error(verbose);
     }
 }
 
@@ -99,8 +96,12 @@ void TProofParser::print(std::ostream &s) {
     }
 }
 
-void TProofParser::error() {
-    throw parser_error("Proof is incorrect");
+void TProofParser::error(bool verbose) {
+    throw proof_error(verbose);
+}
+
+void TProofParser::error(bool verbose, size_t n) {
+    generate_proof_error(verbose, n);
 }
 
 std::ostream &operator<<(std::ostream &s, TProofParser &solver) {

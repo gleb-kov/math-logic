@@ -13,8 +13,7 @@ int main() {
         body.emplace_back(step);
     }
     try {
-        TProofParser solver(head, body);
-        solver.minimize();
+        TProofParser solver(head, body, true);
         std::cout << solver;
     } catch (parser_error const &pae) {
         std::cout << pae.what();

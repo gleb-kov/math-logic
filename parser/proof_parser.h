@@ -7,7 +7,7 @@
 
 #include "../grammar/lib.h"
 #include "../parser/parser.h"
-#include "../parser/parser_error.h"
+#include "errors.h"
 
 class TProofParser {
 private:
@@ -25,7 +25,7 @@ private:
     std::vector<size_t> renumeration;
 
 public:
-    TProofParser(std::string &statement, std::vector<std::string> &proof_body);
+    TProofParser(std::string &statement, std::vector<std::string> &proof_body, bool verbose = false);
 
     context get_context() const;
 
@@ -33,11 +33,14 @@ public:
 
     void minimize();
 
+    friend std::ostream &operator<<(std::ostream &s, TProofParser &);
+
+private:
+    [[noreturn]] static void error(bool verbose) noexcept(false);
+
+    [[noreturn]] static void error(bool verbose, size_t) noexcept(false);
+
     void print(std::ostream &);
-
-    [[noreturn]] void error() noexcept(false);
 };
-
-std::ostream &operator<<(std::ostream &s, TProofParser &);
 
 #endif //MATLOG_PROOF_PARSER_H

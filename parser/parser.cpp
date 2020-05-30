@@ -132,7 +132,7 @@ EToken TParser::starts_with() {
 }
 
 void TParser::error() {
-    throw parser_error("Parsing error");
+    throw parser_error();
 }
 
 void TParser::shift_token() {

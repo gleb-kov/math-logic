@@ -44,7 +44,6 @@ struct TContext;
 
 namespace NGrammar {
     using expr = std::shared_ptr<TNode>;
-    using context = std::shared_ptr<TContext>;
 
     constexpr std::array<EOperation, 4> BINARY = {
             EOperation::Implication,

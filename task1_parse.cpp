@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "parser/parser.h"
+#include "parser/lib.h"
 
 int main() {
     std::string s;

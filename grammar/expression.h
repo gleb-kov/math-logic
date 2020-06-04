@@ -21,7 +21,7 @@ namespace NGrammar {
 
     [[gnu::pure, nodiscard]] var_expr to_variable(expr const &);
 
-
+    // TODO:
 
     [[gnu::pure, nodiscard, gnu::hot]] uint64_t check_axiom_scheme(expr const &);
 

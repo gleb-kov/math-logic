@@ -5,6 +5,7 @@
 #include <string>
 
 #include "../grammar/lib.h"
+#include "../proof/lib.h"
 #include "errors.h"
 
 class TParser {

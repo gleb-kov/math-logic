@@ -25,7 +25,7 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
             proof_state.emplace_back(1, scheme_num);
             proof_dependency.emplace_back();
         } else {
-            std::pair<size_t, size_t> mp = NGrammar::check_modus_ponens(proof, state);
+            std::pair<size_t, size_t> mp = NProof::check_modus_ponens(proof, state);
             if (mp.first == 0 || mp.second == 0) {
                 error(verbose);
             }

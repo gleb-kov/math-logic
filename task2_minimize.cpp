@@ -1,8 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "parser/proof_parser.h"
-#include "parser/errors.h"
+#include "parser/lib.h"
 
 int main() {
     std::string head;

@@ -1,12 +1,12 @@
-#ifndef MATLOG_PROOF_H
-#define MATLOG_PROOF_H
+#ifndef MATLOG_STRUCTURES_H
+#define MATLOG_STRUCTURES_H
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 #include <vector>
 
-#include "grammar.h"
-#include "expression.h"
+#include "proof.h"
 
 struct TExprList {
 private:
@@ -76,11 +76,37 @@ public:
 };
 
 namespace NGrammar {
-    [[gnu::pure, nodiscard, gnu::hot]] std::pair<size_t, size_t> check_modus_ponens(TExprList &, expr const &);
+    using context = std::shared_ptr<TContext>;
+}
 
-    bool is_modus_ponens(TExprList &, expr const &);
+namespace NProof {
+    using pstate = std::unique_ptr<TProofState>;
+}
+
+// TODO:
+struct TProof {
+private:
+    NGrammar::context head;
+    std::vector<std::unique_ptr<TProofState>> proof_state;
+
+public:
+    TProof() = default;
+
+    void set_context() {}
+
+    void add_state() {}
+
+    std::vector<size_t> minimize_body() const {
+        return {};
+    }
+};
+
+namespace NProof {
+    [[gnu::pure, nodiscard, gnu::hot]] std::pair<size_t, size_t> check_modus_ponens(TExprList &, NGrammar::expr const &);
+
+    bool is_modus_ponens(TExprList &, NGrammar::expr const &);
 }
 
 std::ostream &operator<<(std::ostream &s, TContext &);
 
-#endif //MATLOG_PROOF_H
+#endif //MATLOG_STRUCTURES_H

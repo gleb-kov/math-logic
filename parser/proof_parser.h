@@ -7,6 +7,7 @@
 
 #include "../grammar/lib.h"
 #include "../parser/parser.h"
+#include "../proof/lib.h"
 #include "errors.h"
 
 class TProofParser {
@@ -18,6 +19,8 @@ private:
     context head;
     TExprList proof;
     TParser parser;
+
+    // TODO: replace with TProof
     // hypothesis, axiom or modus ponens
     std::vector<std::pair<size_t, uint64_t>> proof_state;
     // connected expr's in proof

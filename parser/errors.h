@@ -9,7 +9,7 @@ public:
 
     parser_error() : std::runtime_error("Parsing error") {}
 
-    explicit parser_error(const char *m) : std::runtime_error(m) {}
+    explicit parser_error(std::string const &m) : std::runtime_error(m) {}
 };
 
 class proof_error : public std::runtime_error {

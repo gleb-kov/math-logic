@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "proof.h"
+#include "structures.h"
 
 void TExprList::add(expr const &e) {
     size_t pos = ++cnt;
@@ -106,7 +106,7 @@ std::string TContext::to_string() {
     return res;
 }
 
-std::pair<size_t, size_t> NGrammar::check_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
+std::pair<size_t, size_t> NProof::check_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
     for (auto it = proof.rev_impl_begin(e); it != proof.rev_impl_end(e); it++) {
         size_t rhs_ind = *it;
         auto rhs = proof[rhs_ind];
@@ -117,7 +117,7 @@ std::pair<size_t, size_t> NGrammar::check_modus_ponens(TExprList &proof, NGramma
     return {0, 0};
 }
 
-bool NGrammar::is_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
+bool NProof::is_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
     auto mp = check_modus_ponens(proof, e);
     return mp.first != 0 && mp.second != 0;
 }

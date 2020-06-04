@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "parser/parser.h"
+#include "parser/lib.h"
 
 using testfunc = std::function<std::string(TParser &, std::string &)>;
 

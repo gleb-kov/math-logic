@@ -21,6 +21,10 @@ namespace NGrammar {
 
     [[gnu::pure, nodiscard]] var_expr to_variable(expr const &);
 
+    [[gnu::pure, nodiscard]] expr gen_negative(expr const &);
+
+    [[gnu::pure, nodiscard]] var_expr gen_variable(std::string const &);
+
     // TODO:
 
     [[gnu::pure, nodiscard, gnu::hot]] uint64_t check_axiom_scheme(expr const &);
@@ -34,14 +38,14 @@ namespace NGrammar {
     [[deprecated("undefined"), gnu::pure, nodiscard, gnu::hot]] uint64_t check_intro_rule(expr const &);
 
     bool is_intro_rule(expr const &);
-
-    // TODO: move to NProof
 }
 
 struct TNode {
     virtual std::string to_suffix() const = 0;
 
     virtual std::string to_string() const = 0;
+
+    virtual size_t depth() const = 0;
 
     virtual size_t calc_hash() const;
 
@@ -77,6 +81,8 @@ public:
 
     [[nodiscard]] std::string to_string() const override;
 
+    size_t depth() const override;
+
     NGrammar::expr get_operand() const;
 
     size_t get_hash() const override;
@@ -99,6 +105,8 @@ public:
     [[nodiscard]] std::string to_suffix() const override;
 
     [[nodiscard]] std::string to_string() const override;
+
+    size_t depth() const override;
 
     NGrammar::expr get_lhs() const;
 
@@ -125,6 +133,8 @@ public:
 
     std::string to_string() const override;
 
+    size_t depth() const override;
+
     size_t get_hash() const override;
 
     bool is_variable() const override;
@@ -139,6 +149,13 @@ namespace std {
     struct hash<TNode> {
         size_t operator()(TNode const &s) const noexcept {
             return s.get_hash();
+        }
+    };
+
+    template<>
+    struct hash<NGrammar::expr> {
+        size_t operator() (NGrammar::expr const &s) const noexcept {
+            return s->get_hash();
         }
     };
 }

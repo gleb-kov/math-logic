@@ -42,6 +42,10 @@ std::string TUnaryOperation::to_string() const {
     return sign.to_string() + operand->to_string();
 }
 
+size_t TUnaryOperation::depth() const {
+    return operand->depth() + 1;
+}
+
 expr TUnaryOperation::get_operand() const {
     return operand;
 }
@@ -70,6 +74,10 @@ std::string TBinaryOperation::to_suffix() const {
 
 std::string TBinaryOperation::to_string() const {
     return '(' + lhs->to_string() + ' ' + sign.to_string() + ' ' + rhs->to_string() + ')';
+}
+
+size_t TBinaryOperation::depth() const {
+    return std::max(lhs->depth(), rhs->depth()) + 1;
 }
 
 expr TBinaryOperation::get_lhs() const {
@@ -108,6 +116,10 @@ std::string TVariable::to_string() const {
     return name;
 }
 
+size_t TVariable::depth() const {
+    return 0;
+}
+
 bool TVariable::is_variable() const {
     return true;
 }
@@ -134,6 +146,14 @@ binary_expr NGrammar::to_binary(expr const &e) {
 
 var_expr NGrammar::to_variable(expr const &e) {
     return std::dynamic_pointer_cast<TVariable>(e);
+}
+
+expr NGrammar::gen_negative(const NGrammar::expr &e) {
+    return std::make_shared<TUnaryOperation>(EOperation::Negation, e);
+}
+
+var_expr NGrammar::gen_variable(std::string const &s) {
+    return std::make_shared<TVariable>(s);
 }
 
 uint64_t NGrammar::check_axiom_scheme(expr const &e) {

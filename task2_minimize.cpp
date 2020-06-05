@@ -1,4 +1,4 @@
-#include <iostream>
+#include <fstream>
 #include <vector>
 
 #include "parser/lib.h"
@@ -14,10 +14,9 @@ int main() {
         body.emplace_back(step);
     }
     try {
-        TProofParser solver;
-        auto proof = solver.parse(head, body).release();
+        auto proof = NProofParser::parse(head, body);
         proof->minimize_body();
-        std::cout << *proof;
+        std::cout << *(proof.get());
     } catch (parser_error const &pae) {
         std::cout << pae.what();
     } catch (proof_error const &pre) {

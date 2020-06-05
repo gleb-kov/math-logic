@@ -6,7 +6,6 @@
 int main() {
     std::string head;
     getline(std::cin, head);
-    TParser solver;
-    NGrammar::expr formula = solver.parse(head);
+    NGrammar::expr formula = TParser().parse(head);
     return 0;
 }

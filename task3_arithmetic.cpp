@@ -12,8 +12,8 @@ int main() {
         body.emplace_back(step);
     }
     try {
-        TProofParser solver(head, body, true);
-        std::cout << solver;
+        auto proof = NProofParser::parse(head, body, true);
+        std::cout << *(proof.get());
     } catch (parser_error const &pae) {
         std::cout << pae.what();
     } catch (proof_error const &pre) {

@@ -107,6 +107,8 @@ public:
 };
 
 namespace NProof {
+    using proof = std::unique_ptr<TProof>;
+
     [[gnu::pure, nodiscard, gnu::hot]] std::pair<size_t, size_t> check_modus_ponens(TExprList &, NGrammar::expr const &);
 
     bool is_modus_ponens(TExprList &, NGrammar::expr const &);

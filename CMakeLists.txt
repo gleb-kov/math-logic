@@ -18,7 +18,10 @@ add_library(proof STATIC
         proof/proof.cpp
 
         proof/structures.h
-        proof/structures.cpp)
+        proof/structures.cpp
+
+        proof/auto_prove.h
+        proof/auto_prove.cpp)
 
 add_library(parser STATIC
         parser/lib.h

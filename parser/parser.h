@@ -20,7 +20,7 @@ private:
     std::string::iterator end;
 
 private:
-    [[nodiscard, gnu::hot]] expr parse();
+    [[nodiscard]] expr parse();
 
     [[nodiscard]] expr parse_impl();
 

@@ -3,5 +3,6 @@
 
 #include "proof.h"
 #include "structures.h"
+#include "auto_prove.h"
 
 #endif //MATLOG_PROOF_LIB_H

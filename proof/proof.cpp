@@ -1,6 +1,6 @@
 #include "proof.h"
 
-bool TProofState::check_state(EProofState) const {
+bool IProofState::check_state(EProofState) const {
     return false;
 }
 

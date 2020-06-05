@@ -4,6 +4,8 @@
 #include "parser/lib.h"
 
 int main() {
+    // std::ifstream fin("input.txt");
+
     std::string head;
     std::string step;
     getline(std::cin, head);
@@ -12,9 +14,10 @@ int main() {
         body.emplace_back(step);
     }
     try {
-        TProofParser solver(head, body);
-        solver.minimize();
-        std::cout << solver;
+        TProofParser solver;
+        auto proof = solver.parse(head, body).release();
+        proof->minimize_body();
+        std::cout << *proof;
     } catch (parser_error const &pae) {
         std::cout << pae.what();
     } catch (proof_error const &pre) {

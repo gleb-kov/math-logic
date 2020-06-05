@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "structures.h"
 
 void TExprList::add(expr const &e) {
@@ -105,16 +107,47 @@ std::string TContext::to_string() const {
 }
 
 void TProof::set_context(NGrammar::context ctx) {
-    head = ctx;
+    head = std::move(ctx);
 }
 
 void TProof::add_state(TProof::pstate ps) {
     proof_state.push_back(std::move(ps));
 }
 
-// TODO:
 void TProof::minimize_body() {
-
+    size_t last = proof_state.size();
+    std::vector<size_t> renumeration(last + 1, 0);
+    std::queue<size_t> dep({last});
+    renumeration[last] = 1;
+    while (!dep.empty()) {
+        size_t cur = dep.front();
+        dep.pop();
+        if (proof_state[cur - 1]->get_state() == EProofState::ModusPonens){
+            auto t = NProof::to_mp(proof_state[cur - 1])->mp_numbers();
+            if (renumeration[t.first] == 0) {
+                renumeration[t.first] = 1;
+                dep.push(t.first);
+            }
+            if (renumeration[t.second] == 0) {
+                renumeration[t.second] = 1;
+                dep.push(t.second);
+            }
+        }
+    }
+    size_t cnt = 0;
+    for (size_t i = 1; i < renumeration.size(); i++) {
+        cnt += renumeration[i];
+        if (renumeration[i]) renumeration[i] = cnt;
+        if (proof_state[i - 1]->get_state() == EProofState::ModusPonens) {
+            auto t = NProof::to_mp(proof_state[i - 1])->mp_numbers();
+            NProof::to_mp(proof_state[i-1])->renumerate(renumeration[t.first], renumeration[t.second]);
+        }
+    }
+    for (size_t i = renumeration.size(); i > 1;) {
+        i--;
+        if (renumeration[i]) continue;
+        proof_state.erase(proof_state.begin() + i - 1);
+    }
 }
 
 std::pair<size_t, size_t> NProof::check_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
@@ -144,24 +177,24 @@ std::ostream &operator<<(std::ostream &s, TProof &p) {
         s << '[' << i + 1 << ". ";
         switch (p.proof_state[i]->get_state()) {
             case EProofState::Axiom:{
-                s << "Ax. " << p.proof_state[i]->get_number();
+                s << "Ax. " << NProof::caster<TAxiom>(p.proof_state[i])->get_number();
                 break;
             }
             case EProofState::AxiomScheme:{
-                s << "Ax. sch. " << p.proof_state[i]->get_number();
+                s << "Ax. sch. " << NProof::caster<TAxiomScheme>(p.proof_state[i])->get_number();
                 break;
             }
             case EProofState::ModusPonens:{
-                auto t = p.proof_state[i]->mp_numbers();
+                auto t = NProof::to_mp(p.proof_state[i])->mp_numbers();
                 s << "M.P. " << t.first << ", " << t.second;
                 break;
             }
             case EProofState::Hypothesis:{
-                s << "Hypothesis " << p.proof_state[i]->get_number();
+                s << "Hypothesis " << NProof::caster<THypothesis>(p.proof_state[i])->get_number();
                 break;
             }
         }
-        s << "] " << p.proof_state[i + 1]->get_expr()->to_string() << std::endl;
+        s << "] " << p.proof_state[i]->get_expr()->to_string() << std::endl;
     }
     return s;
 }

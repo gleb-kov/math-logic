@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include <vector>
+#include <queue>
 
 #include "proof.h"
 
@@ -80,17 +81,13 @@ namespace NGrammar {
     using context = std::shared_ptr<TContext>;
 }
 
-namespace NProof {
-    using pstate = std::unique_ptr<TProofState>;
-}
-
 struct TProof {
 private:
     using pstate = NProof::pstate;
 
 private:
     NGrammar::context head;
-    std::vector<pstate> proof_state;
+    std::vector<NProof::pstate> proof_state;
 
 public:
     TProof() = default;
@@ -101,7 +98,7 @@ public:
 
     template<typename T, typename ... Args>
     void add_state(Args && ... args) {
-        proof_state.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+        proof_state.push_back(std::make_unique<T>(std::forward<Args>(args)...));
     }
 
     void minimize_body();

@@ -10,19 +10,15 @@ enum class EProofState {
     ModusPonens
 };
 
-struct TProofState {
+struct IProofState {
     virtual EProofState get_state() const = 0;
 
     virtual bool check_state(EProofState) const;
 
     virtual NGrammar::expr get_expr() const = 0;
-
-    virtual size_t get_number() const = 0;
-
-    virtual std::pair<size_t, size_t> mp_numbers() const = 0;
 };
 
-struct TAxiom : TProofState {
+struct TAxiom : IProofState {
 private:
     size_t num;
     NGrammar::expr operand;
@@ -34,12 +30,12 @@ public:
 
     bool check_state(EProofState) const override;
 
-    size_t get_number() const override;
+    size_t get_number() const;
 
     NGrammar::expr get_expr() const override;
 };
 
-struct TAxiomScheme : TProofState {
+struct TAxiomScheme : IProofState {
 private:
     size_t num;
     NGrammar::expr operand;
@@ -51,12 +47,12 @@ public:
 
     bool check_state(EProofState) const override;
 
-    size_t get_number() const override;
+    size_t get_number() const;
 
-    NGrammar::expr get_expr() const override ;
+    NGrammar::expr get_expr() const override;
 };
 
-struct THypothesis : TProofState {
+struct THypothesis : IProofState {
 private:
     size_t num;
     NGrammar::expr operand;
@@ -68,12 +64,12 @@ public:
 
     bool check_state(EProofState) const override;
 
-    size_t get_number() const override;
+    size_t get_number() const;
 
     NGrammar::expr get_expr() const override;
 };
 
-struct TModusPonens : TProofState {
+struct TModusPonens : IProofState {
 private:
     size_t lnum;
     size_t rnum;
@@ -86,11 +82,25 @@ public:
 
     bool check_state(EProofState) const override;
 
-    std::pair<size_t, size_t> mp_numbers() const override;
+    std::pair<size_t, size_t> mp_numbers() const;
 
     void renumerate(size_t, size_t);
 
     NGrammar::expr get_expr() const override;
 };
+
+namespace NProof {
+    using pstate = std::unique_ptr<IProofState>;
+    using mp_state = std::unique_ptr<TModusPonens>;
+
+    template <typename T>
+    [[gnu::pure, nodiscard]] inline T * caster(pstate const &e) {
+        return dynamic_cast<T *>(e.get());
+    }
+
+    [[gnu::pure, nodiscard]] inline TModusPonens * to_mp(pstate const &e) {
+        return caster<TModusPonens>(e);
+    }
+}
 
 #endif //MATLOG_PROOF_H

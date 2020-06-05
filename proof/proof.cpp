@@ -6,6 +6,10 @@ bool TProofState::check_state(EProofState) const {
 
 TAxiom::TAxiom(size_t n, NGrammar::expr e) : num(n), operand(e) {}
 
+EProofState TAxiom::get_state() const {
+    return EProofState::Axiom;
+}
+
 bool TAxiom::check_state(EProofState s) const {
     return s == EProofState::Axiom;
 }
@@ -20,6 +24,10 @@ NGrammar::expr TAxiom::get_expr() const {
 
 TAxiomScheme::TAxiomScheme(size_t n, NGrammar::expr e) : num(n), operand(e) {}
 
+EProofState TAxiomScheme::get_state() const {
+    return EProofState::AxiomScheme;
+}
+
 bool TAxiomScheme::check_state(EProofState s) const {
     return s == EProofState::AxiomScheme;
 }
@@ -32,27 +40,44 @@ NGrammar::expr TAxiomScheme::get_expr() const {
     return operand;
 }
 
-TModusPonens::TModusPonens(size_t ln, NGrammar::expr l, size_t rn, NGrammar::expr r)
-        : lnum(ln), rnum(rn), lhs(l), rhs(r) {}
+THypothesis::THypothesis(size_t n, NGrammar::expr e) : num(n), operand(e) {}
 
-bool TModusPonens::check_state(EProofState s) const {
-    return s == EProofState::ModusPonens;
+EProofState THypothesis::get_state() const {
+    return EProofState::Hypothesis;
 }
-
-NGrammar::expr TModusPonens::get_lhs() const {
-    return lhs;
-}
-
-NGrammar::expr TModusPonens::get_rhs() const {
-    return rhs;
-}
-
-THypothesis::THypothesis(NGrammar::expr e) : operand(e) {}
 
 bool THypothesis::check_state(EProofState s) const {
     return s == EProofState::Hypothesis;
 }
 
+size_t THypothesis::get_number() const {
+    return num;
+}
+
 NGrammar::expr THypothesis::get_expr() const {
+    return operand;
+}
+
+TModusPonens::TModusPonens(size_t ln, size_t rn, NGrammar::expr e)
+        : lnum(ln), rnum(rn), operand(e) {}
+
+EProofState TModusPonens::get_state() const {
+    return EProofState::ModusPonens;
+}
+
+bool TModusPonens::check_state(EProofState s) const {
+    return s == EProofState::ModusPonens;
+}
+
+std::pair<size_t, size_t> TModusPonens::mp_numbers() const {
+    return {lnum, rnum};
+}
+
+void TModusPonens::renumerate(size_t l, size_t r) {
+    lnum = l;
+    rnum = r;
+}
+
+NGrammar::expr TModusPonens::get_expr() const {
     return operand;
 }

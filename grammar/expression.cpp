@@ -24,7 +24,7 @@ bool TNode::is_variable() const {
     return false;
 }
 
-bool TNode::check_sign(EOperation) {
+bool TNode::check_sign(EOperation) const {
     return false;
 }
 
@@ -54,7 +54,7 @@ bool TUnaryOperation::is_unary() const {
     return true;
 }
 
-bool TUnaryOperation::check_sign(EOperation cmp) {
+bool TUnaryOperation::check_sign(EOperation cmp) const {
     return sign.get_sign() == cmp;
 }
 
@@ -88,7 +88,7 @@ bool TBinaryOperation::is_binary() const {
     return true;
 }
 
-bool TBinaryOperation::check_sign(EOperation cmp) {
+bool TBinaryOperation::check_sign(EOperation cmp) const {
     return sign.get_sign() == cmp;
 }
 

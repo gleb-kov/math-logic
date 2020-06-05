@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "../grammar/lib.h"
-#include "../parser/parser.h"
 #include "../proof/lib.h"
+#include "../parser/parser.h"
 #include "errors.h"
 
 class TProofParser {
@@ -28,22 +28,20 @@ private:
     std::vector<size_t> renumeration;
 
 public:
+    TProofParser() = delete;
+
     TProofParser(std::string &statement, std::vector<std::string> &proof_body, bool verbose = false);
 
-    context get_context() const;
+    [[deprecated]] void minimize();
 
-    size_t proof_size() const;
-
-    void minimize();
-
-    friend std::ostream &operator<<(std::ostream &s, TProofParser &);
+    friend std::ostream &operator<<(std::ostream &, TProofParser &);
 
 private:
     [[noreturn]] static void error(bool verbose) noexcept(false);
 
     [[noreturn]] static void error(bool verbose, size_t) noexcept(false);
 
-    void print(std::ostream &);
+    [[deprecated]] void print(std::ostream &);
 };
 
 #endif //MATLOG_PROOF_PARSER_H

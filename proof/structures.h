@@ -2,6 +2,7 @@
 #define MATLOG_STRUCTURES_H
 
 #include <string>
+#include <iostream>
 #include <unordered_map>
 #include <memory>
 #include <vector>
@@ -64,15 +65,15 @@ public:
 
     void set_statement(expr const &);
 
-    size_t get_hypothesis(expr const &);
+    size_t get_hypothesis(expr const &) const;
 
-    bool has_hypothesis(expr const &);
+    bool has_hypothesis(expr const &) const;
 
-    expr get_statement();
+    expr get_statement() const;
 
     size_t size() const;
 
-    std::string to_string();
+    std::string to_string() const;
 };
 
 namespace NGrammar {
@@ -83,22 +84,29 @@ namespace NProof {
     using pstate = std::unique_ptr<TProofState>;
 }
 
-// TODO:
 struct TProof {
 private:
+    using pstate = NProof::pstate;
+
+private:
     NGrammar::context head;
-    std::vector<std::unique_ptr<TProofState>> proof_state;
+    std::vector<pstate> proof_state;
 
 public:
     TProof() = default;
 
-    void set_context() {}
+    void set_context(NGrammar::context);
 
-    void add_state() {}
+    void add_state(pstate);
 
-    std::vector<size_t> minimize_body() const {
-        return {};
+    template<typename T, typename ... Args>
+    void add_state(Args && ... args) {
+        proof_state.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
     }
+
+    void minimize_body();
+
+    friend std::ostream &operator<<(std::ostream &, TProof &);
 };
 
 namespace NProof {

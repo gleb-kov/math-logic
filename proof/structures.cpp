@@ -1,5 +1,3 @@
-#include <cassert>
-
 #include "structures.h"
 
 void TExprList::add(expr const &e) {
@@ -76,15 +74,15 @@ void TContext::set_statement(expr const &res) {
     result = res;
 }
 
-size_t TContext::get_hypothesis(expr const &hyp) {
+size_t TContext::get_hypothesis(expr const &hyp) const {
     return hypothesis.get_index(hyp);
 }
 
-bool TContext::has_hypothesis(expr const &hyp) {
+bool TContext::has_hypothesis(expr const &hyp) const {
     return hypothesis.contains(hyp);
 }
 
-NGrammar::expr TContext::get_statement() {
+NGrammar::expr TContext::get_statement() const {
     return result;
 }
 
@@ -92,7 +90,7 @@ size_t TContext::size() const {
     return hypothesis.size();
 }
 
-std::string TContext::to_string() {
+std::string TContext::to_string() const {
     std::string res;
     for (size_t i = 1; i <= hypothesis.size(); i++) {
         res += hypothesis[i]->to_string();
@@ -104,6 +102,19 @@ std::string TContext::to_string() {
     res += sign.to_string() + ' ';
     res += result->to_string();
     return res;
+}
+
+void TProof::set_context(NGrammar::context ctx) {
+    head = ctx;
+}
+
+void TProof::add_state(TProof::pstate ps) {
+    proof_state.push_back(std::move(ps));
+}
+
+// TODO:
+void TProof::minimize_body() {
+
 }
 
 std::pair<size_t, size_t> NProof::check_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
@@ -124,5 +135,33 @@ bool NProof::is_modus_ponens(TExprList &proof, NGrammar::expr const &e) {
 
 std::ostream &operator<<(std::ostream &s, TContext &e) {
     s << e.to_string();
+    return s;
+}
+
+std::ostream &operator<<(std::ostream &s, TProof &p) {
+    s << p.head->to_string() << std::endl;
+    for (size_t i = 0; i < p.proof_state.size(); i++) {
+        s << '[' << i + 1 << ". ";
+        switch (p.proof_state[i]->get_state()) {
+            case EProofState::Axiom:{
+                s << "Ax. " << p.proof_state[i]->get_number();
+                break;
+            }
+            case EProofState::AxiomScheme:{
+                s << "Ax. sch. " << p.proof_state[i]->get_number();
+                break;
+            }
+            case EProofState::ModusPonens:{
+                auto t = p.proof_state[i]->mp_numbers();
+                s << "M.P. " << t.first << ", " << t.second;
+                break;
+            }
+            case EProofState::Hypothesis:{
+                s << "Hypothesis " << p.proof_state[i]->get_number();
+                break;
+            }
+        }
+        s << "] " << p.proof_state[i + 1]->get_expr()->to_string() << std::endl;
+    }
     return s;
 }

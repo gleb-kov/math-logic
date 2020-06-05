@@ -34,6 +34,8 @@ namespace NGrammar {
     [[deprecated("undefined"), gnu::pure, nodiscard, gnu::hot]] uint64_t check_intro_rule(expr const &);
 
     bool is_intro_rule(expr const &);
+
+    // TODO: move to NProof
 }
 
 struct TNode {
@@ -51,7 +53,7 @@ struct TNode {
 
     virtual bool is_variable() const;
 
-    virtual bool check_sign(EOperation);
+    virtual bool check_sign(EOperation) const;
 
     friend bool operator==(NGrammar::expr const &lhs, NGrammar::expr const &rhs) {
         return lhs->get_hash() == rhs->get_hash();
@@ -81,7 +83,7 @@ public:
 
     bool is_unary() const override;
 
-    bool check_sign(EOperation) override;
+    bool check_sign(EOperation) const override;
 };
 
 struct TBinaryOperation : TNode {
@@ -106,7 +108,7 @@ public:
 
     bool is_binary() const override;
 
-    bool check_sign(EOperation) override;
+    bool check_sign(EOperation) const override;
 };
 
 struct TVariable : TNode {

@@ -40,14 +40,6 @@ TProofParser::TProofParser(std::string &statement, std::vector<std::string> &pro
     }
 }
 
-NGrammar::context TProofParser::get_context() const {
-    return head;
-}
-
-size_t TProofParser::proof_size() const {
-    return proof.size();
-}
-
 void TProofParser::minimize() {
     size_t last = proof.size();
     renumeration.assign(last + 1, 0);

@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 
-#include "godel.h"
+#include "../lib/godel.h"
 
 using namespace godel;
 

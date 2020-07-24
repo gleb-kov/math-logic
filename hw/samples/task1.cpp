@@ -1,15 +1,14 @@
 #include <iostream>
 #include <vector>
 
-#include "recursive.h"
+#include "../lib/recursive.h"
+#include "../lib/typelist.h"
 
 using namespace recursive;
 using namespace recursive::primitives;
 using namespace recursive::operations;
 
 using namespace std;
-
-#include "typelist.h"
 
 int main() {
     using te = TypeList<U<3,1,ull>, U<3,2,ull>>;

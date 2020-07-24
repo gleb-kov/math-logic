@@ -2,7 +2,7 @@
 #include <vector>
 #include <cassert>
 
-#include "ackermann.h"
+#include "../lib/ackermann.h"
 
 int main() {
     auto sol = ackermann::solve({1, 1});

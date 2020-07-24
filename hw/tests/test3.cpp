@@ -1,6 +1,5 @@
-#include "gtest/gtest.h"
-
-#include "ackermann.h"
+#include "../gtest/gtest.h"
+#include "../lib/ackermann.h"
 
 // expect n+1
 TEST(zerom, simple) {

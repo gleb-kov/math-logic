@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
-#include "recursive.h"
+#include "../gtest/gtest.h"
+#include "../lib/recursive.h"
 
 using recursive::ull;
 using namespace recursive::operations;

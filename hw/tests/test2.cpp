@@ -1,6 +1,5 @@
-#include "gtest/gtest.h"
-
-#include "godel.h"
+#include "../gtest/gtest.h"
+#include "../lib/godel.h"
 
 using namespace godel;
 

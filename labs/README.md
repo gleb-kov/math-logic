@@ -3,6 +3,7 @@
 
 Course testing system (http://neerc.ifmo.ru/p) requires:
 
+## Build
 - [Makefile](/Makefile)
 
 - Zip all files:
@@ -13,4 +14,8 @@ zip build.zip -r .
 ```
 
 Otherwise, use [CMake](/CMakeLists.txt).
+
+## Issues
+
+Tasks 3 and 4 are incomplete. Also, there's TODO list.
 

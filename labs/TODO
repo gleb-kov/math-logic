@@ -1,0 +1,8 @@
+1. add pattern matching
+2. fix TNode operator==
+3. up coverage
+4. hide smart pointers into wrappers
+5. fix leak by adding virtual destructor to TNode
+6. rewrite CMakeLists in proper way
+7. place task files into solutions/ dir
+
